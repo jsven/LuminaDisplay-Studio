@@ -1,0 +1,25 @@
+﻿{
+  "id": "gaming-console",
+  "family": "portable-monitor",
+  "title": "Gaming Console",
+  "purpose": "Show Switch or handheld-console connectivity and entertainment usage.",
+  "exportTargets": [
+    "amazon-feature-images",
+    "amazon-video"
+  ],
+  "applicableSizes": [
+    "*"
+  ],
+  "defaultHighlights": [
+    "gaming",
+    "low-latency-feel",
+    "multi-device-compatibility"
+  ],
+  "overrideKeys": [
+    "cameraDistance",
+    "pairedDevice",
+    "screenContent",
+    "branding"
+  ]
+}
+

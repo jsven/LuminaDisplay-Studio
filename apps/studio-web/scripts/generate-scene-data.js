@@ -1,0 +1,252 @@
+﻿const fs = require('node:fs');
+const path = require('node:path');
+
+const appRoot = path.resolve(__dirname, '..');
+const repoRoot = path.resolve(appRoot, '..', '..');
+const productRoot = path.join(repoRoot, 'scenarios', 'portable-monitor', 'products', '16-inch');
+const outputDir = path.join(appRoot, 'public', 'generated');
+const outputFile = path.join(outputDir, 'portable-monitor-16-inch.json');
+
+function readJson(filePath) {
+  const raw = fs.readFileSync(filePath, 'utf8').replace(/^\uFEFF/, '');
+  return JSON.parse(raw);
+}
+
+function loadOverrides(dirPath) {
+  return fs
+    .readdirSync(dirPath)
+    .filter((entry) => entry.endsWith('.json'))
+    .map((entry) => readJson(path.join(dirPath, entry)))
+    .reduce((map, entry) => {
+      map[entry.presetId] = entry;
+      return map;
+    }, {});
+}
+
+const product = readJson(path.join(productRoot, 'product.json'));
+const overrides = loadOverrides(path.join(productRoot, 'overrides'));
+
+const prompts = {
+  heroMain: `Use case: product-mockup\nAsset type: Amazon main image\nPrimary request: create a photorealistic 3D hero render for a 16-inch portable monitor listing\nScene/backdrop: pure white studio background\nSubject: black 16-inch portable monitor with a large integrated stand, slim 12mm metal body, thin bezels and a centered LuminaDisplay brand mark on the lower bezel\nStyle/medium: photorealistic 3D product render\nComposition/framing: front-facing hero shot with a slight 5-degree top-down camera angle; product fills about 88% of the frame; show the full product only once\nLighting/mood: clean high-key studio lighting with soft reflections and crisp edge definition\nColor palette: white background, black metal body, cool blue-gray screen glow\nMaterials/textures: CNC aluminum alloy with subtle brushed-metal reflections; glossy but controlled IPS panel surface\nText (verbatim): \"\"\nConstraints: main-image compliant; no props; no cables; no callout text; no watermark; show only the sold product\nAvoid: illustration look, fake floating accessories, extreme perspective distortion, overexposed screen`,
+  materials: `Use case: product-mockup\nAsset type: Amazon feature image\nPrimary request: create a premium 3D feature render highlighting the slim metal body and large stand of a 16-inch portable monitor\nScene/backdrop: soft light-gray gradient studio backdrop with room for text on the right\nSubject: black CNC aluminum portable monitor angled at 45 degrees with the stand deployed\nStyle/medium: photorealistic 3D advertising render\nComposition/framing: product on the left side, large stand clearly visible, right side reserved for feature text\nLighting/mood: premium showroom lighting with a controlled rim light on the body edges and stand hinge\nColor palette: graphite black, cool silver highlights, neutral gray background\nMaterials/textures: brushed CNC aluminum, smooth matte stand, glossy display glass\nText (verbatim): \"CNC Aluminum Body\\n12mm Slim Profile\\nLarge Stable Stand\"\nConstraints: keep the product proportion accurate to 355 x 228 x 12 mm; emphasize thinness without making the screen look small\nAvoid: cluttered props, warm orange lighting, exaggerated reflections that hide the body shape`,
+  office: `Use case: product-mockup\nAsset type: Amazon lifestyle feature image\nPrimary request: show a 16-inch portable monitor as a premium second screen for office productivity\nScene/backdrop: modern desk setup with a premium laptop, wireless keyboard and mouse, soft daylight from the side\nSubject: 16-inch portable monitor paired with a 15-inch laptop in a dual-screen work setup\nStyle/medium: photorealistic 3D lifestyle render\nComposition/framing: medium-wide desk shot; monitor slightly right of center; laptop on the left; clear header space above\nLighting/mood: bright productive daylight with clean premium mood\nColor palette: black hardware, walnut desk, soft silver laptop, cool blue UI accents\nMaterials/textures: brushed metal monitor body, crisp IPS panel, realistic desk grain\nText (verbatim): \"16:10 2.5K Productivity Display\\nMore vertical space for code, sheets and multitasking\"\nConstraints: make the external monitor visually dominant but believable; show extra vertical workspace on screen; keep scene uncluttered\nAvoid: gaming RGB setup, excessive bokeh, messy cables, tiny unreadable screen content`,
+  gaming: `Use case: product-mockup\nAsset type: Amazon gaming feature image\nPrimary request: create a dynamic 3D scene that sells the 144Hz gaming capability of a 16-inch portable monitor\nScene/backdrop: dark premium gaming desk with subtle ambient lighting and a connected handheld console\nSubject: 16-inch black portable monitor showing a vivid high-speed racing game, with a handheld console placed in the lower-right foreground\nStyle/medium: photorealistic 3D advertising render\nComposition/framing: monitor occupies the main focus; console acts as a secondary anchor; strong forward energy in the frame\nLighting/mood: high-contrast cinematic lighting with bright screen emphasis and subtle edge lights on the body\nColor palette: black body, blue and cyan highlights, vivid warm-red racing accents on screen\nMaterials/textures: metal body, glossy display, realistic controller plastic and screen reflections\nText (verbatim): \"144Hz Smooth Gameplay\\nFast refresh. Bright IPS color. Console-ready.\"\nConstraints: show motion and performance without motion blur hiding the panel; keep the monitor body visible; make the screen appear bright but not clipped\nAvoid: cartoon visuals, excessive neon clutter, fake transparent body elements, exaggerated sci-fi props`,
+  travel: `Use case: product-mockup\nAsset type: Amazon portability feature image\nPrimary request: show that a 16-inch portable monitor can still be travel-friendly and light enough for mobile work\nScene/backdrop: stylish coffee shop table with a backpack, phone, passport and USB-C cable nearby\nSubject: slim black 16-inch portable monitor open on a cafe table, styled as a portable work companion\nStyle/medium: photorealistic 3D lifestyle render\nComposition/framing: monitor remains the main subject; travel props support the story without overwhelming the frame\nLighting/mood: warm natural cafe daylight with clean, realistic shadows\nColor palette: matte black hardware, warm wood tones, soft beige travel props, cool UI screen accents\nMaterials/textures: metal body, woven backpack fabric, glass tabletop or sealed wood surface, realistic cable materials\nText (verbatim): \"16 Inches, Still Travel-Ready\\n760g lightweight body | 12mm slim metal design\"\nConstraints: keep the product looking premium and portable, not tiny; props must feel realistic and secondary; use a clean single-cable setup\nAvoid: overcrowded cafe background, travel props covering the screen, unrealistic folded geometry, childish colors`,
+  ports: `Use case: product-mockup\nAsset type: Amazon infographic feature image\nPrimary request: create a clean 3D detail render that explains the full connectivity of a 16-inch portable monitor\nScene/backdrop: minimalist dark-to-light gradient background with technical callout space\nSubject: close-up of the side profile of the monitor showing Mini HDMI, full-function USB-C, power USB-C and 3.5mm audio jack\nStyle/medium: photorealistic 3D technical product render\nComposition/framing: tight side-angle crop on the port area with clean callout leader lines and text zones\nLighting/mood: precise studio detail lighting with clear edge highlights and visible port depth\nColor palette: black metal body, neutral gray background, subtle cyan callout accents\nMaterials/textures: brushed metal, sharp chamfers, realistic cutouts and connector edges\nText (verbatim): \"Mini HDMI + Dual USB-C + Audio\\nEasy connection for laptop, console and phone workflows\"\nConstraints: keep port ordering accurate to the product spec; maintain realistic scale and spacing; use premium, minimal callouts\nAvoid: overly busy exploded view, inaccurate connector shapes, glowing fantasy ports, cluttered annotation design`,
+  rear: `Use case: product-mockup\nAsset type: Amazon feature image\nPrimary request: highlight the VESA mounting support and built-in dual speakers of a 16-inch portable monitor\nScene/backdrop: premium neutral studio background with infographic-style layout zones\nSubject: rear three-quarter view of the monitor showing the stand structure and VESA mounting area, supported by small secondary usage insets\nStyle/medium: photorealistic 3D commercial render\nComposition/framing: rear product view on the left, clean feature blocks on the right, balanced for easy reading\nLighting/mood: crisp neutral studio lighting with edge highlights on the rear shell and stand details\nColor palette: black and graphite body tones, muted gray background, restrained blue accent graphics\nMaterials/textures: brushed aluminum rear shell, precise mount holes, matte support surfaces\nText (verbatim): \"VESA Mount Ready\\n75 x 75 mm support | Built-in dual speakers\"\nConstraints: keep the layout premium and sparse; do not overcomplicate the inset graphics; show the rear design clearly\nAvoid: low-detail rear shell, random screws, cluttered exploded view, speaker grilles that contradict the real product`,
+};
+
+const scenes = [
+  {
+    id: 'hero-main',
+    label: 'IMG-01 主图 Hero',
+    category: 'Amazon 主图',
+    objective: '突出 16 英寸大屏、16:10 比例、金属机身与大支架，同时保持主图合规。',
+    headline: '16-inch 2.5K Portable Monitor',
+    subheadline: 'Pure-white hero frame. No copy. No props. Ready for Amazon main image.',
+    presetId: null,
+    screenTemplate: 'hero-glow',
+    props: [],
+    callouts: [],
+    badges: ['Main Image', '16:10', '2.5K', 'Metal Body'],
+    compliance: ['纯白背景', '产品占画面 85%+', '不加文案', '不加配件'],
+    appearance: {
+      accent: '#7dd3fc',
+      backdrop: 'radial-gradient(circle at 12% 18%, rgba(125, 211, 252, 0.14), transparent 28%), linear-gradient(145deg, #f7f4ed 0%, #efe7d8 46%, #ffffff 100%)',
+      floor: 'linear-gradient(180deg, rgba(255,255,255,0.1), rgba(182, 196, 210, 0.24))',
+      panel: '#f4ede1',
+      text: '#11161d',
+    },
+    camera: { rotateX: 10, rotateY: -22, rotateZ: 0, scale: 1.08 },
+    copyLines: ['Hero image only. Keep text off the rendered canvas.', 'Use subtle bloom on the screen, not on the bezel.'],
+    renderHints: ['顶光和前方柔光同时开，保证边框边缘干净。', '屏幕亮度不要压过边框高光。'],
+    prompt: prompts.heroMain,
+  },
+  {
+    id: 'material-stand',
+    label: 'IMG-02 金属机身与大支架',
+    category: 'Amazon 副图',
+    objective: '强调 CNC 铝合金、12mm 轻薄和大支架结构，建立高级感。',
+    headline: 'CNC Aluminum Body',
+    subheadline: '12mm Slim Profile · Large Stable Stand',
+    presetId: null,
+    screenTemplate: 'material-sheen',
+    props: ['copy-column'],
+    callouts: ['CNC aluminum alloy', '12 mm slim body', 'Wide stable stand'],
+    badges: ['Premium Build', '12mm Slim', 'Large Stand'],
+    compliance: ['允许加文案', '右侧留白适合标题', '产品比例需真实'],
+    appearance: {
+      accent: '#ffd89a',
+      backdrop: 'radial-gradient(circle at 18% 26%, rgba(255, 216, 154, 0.18), transparent 30%), linear-gradient(160deg, #1b2027 0%, #232a33 35%, #d9d4ca 100%)',
+      floor: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(29, 37, 46, 0.42))',
+      panel: '#1f252d',
+      text: '#f5f0e6',
+    },
+    camera: { rotateX: 14, rotateY: -36, rotateZ: 0, scale: 1.02 },
+    copyLines: ['金属高光要细，不要做成镜面不锈钢。', '支架需要看起来稳，而不是轻飘。'],
+    renderHints: ['区域光沿着机身侧边扫过，强化 12mm 厚度。', '背部轮廓光略强于正面。'],
+    prompt: prompts.materials,
+  },
+  {
+    id: 'office-productivity',
+    label: 'IMG-03 移动办公双屏',
+    category: 'Amazon 副图',
+    objective: '用双屏办公场景突出 16:10 和 2.5K 的生产力价值。',
+    headline: '16:10 2.5K Productivity Display',
+    subheadline: 'More vertical space for code, sheets and multitasking',
+    presetId: 'office-dual-screen',
+    screenTemplate: 'office-workflow',
+    props: ['desk', 'laptop', 'keyboard', 'mouse'],
+    callouts: ['More vertical workspace', 'Sharp text at 2560x1600', 'USB-C single-cable workflow'],
+    badges: ['Office', '2.5K', '16:10', 'USB-C'],
+    compliance: ['可加入标题与副文案', '主体仍需清晰可辨', '场景道具不能压过屏幕'],
+    appearance: {
+      accent: '#9ee7cf',
+      backdrop: 'radial-gradient(circle at 15% 20%, rgba(158, 231, 207, 0.16), transparent 28%), linear-gradient(155deg, #efe0c2 0%, #d7c4a1 34%, #f6f2e7 100%)',
+      floor: 'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(92, 65, 38, 0.3))',
+      panel: '#f8f2e6',
+      text: '#16202a',
+    },
+    camera: { rotateX: 10, rotateY: -19, rotateZ: 0, scale: 0.98 },
+    copyLines: ['左侧搭配 15 英寸笔记本，避免把显示器显得过小。', '屏幕内容要展示代码和表格纵向空间。'],
+    renderHints: ['自然光偏暖，屏幕 UI 偏冷，拉出办公氛围层次。', '键盘鼠标只做辅助，不要铺满桌面。'],
+    prompt: prompts.office,
+  },
+  {
+    id: 'gaming-144hz',
+    label: 'IMG-04 144Hz 游戏娱乐场景',
+    category: 'Amazon 副图',
+    objective: '突出 144Hz、400 nits 和 IPS 色彩，服务游戏与娱乐用户。',
+    headline: '144Hz Smooth Gameplay',
+    subheadline: 'Fast refresh. Bright IPS color. Console-ready.',
+    presetId: 'gaming-console',
+    screenTemplate: 'gaming-racer',
+    props: ['desk', 'console'],
+    callouts: ['144Hz refresh rate', '400 nits bright panel', 'Wide viewing angle IPS'],
+    badges: ['Gaming', '144Hz', 'IPS', '400 nits'],
+    compliance: ['允许高对比度氛围', '主体外形仍需完整可见', '动感不能依赖强模糊'],
+    appearance: {
+      accent: '#60a5fa',
+      backdrop: 'radial-gradient(circle at 16% 18%, rgba(96, 165, 250, 0.22), transparent 24%), radial-gradient(circle at 82% 22%, rgba(244, 63, 94, 0.18), transparent 18%), linear-gradient(160deg, #06111c 0%, #091927 40%, #1b2333 100%)',
+      floor: 'linear-gradient(180deg, rgba(255,255,255,0.04), rgba(12, 16, 24, 0.62))',
+      panel: '#0f1824',
+      text: '#e9f2ff',
+    },
+    camera: { rotateX: 12, rotateY: -24, rotateZ: 0, scale: 1.03 },
+    copyLines: ['游戏画面可以有速度线，但别把屏幕面板做成拖影。', '掌机只做连接提示，不是主角。'],
+    renderHints: ['让画面亮度集中在屏幕中上区域，机身轮廓光保持干净。', '环境光偏冷，赛道高光偏暖，形成速度冲突感。'],
+    prompt: prompts.gaming,
+  },
+  {
+    id: 'travel-portable',
+    label: 'IMG-05 便携出行场景',
+    category: 'Amazon 副图',
+    objective: '证明 16 寸依然便携，重点传达 760g 和 12mm。',
+    headline: '16 Inches, Still Travel-Ready',
+    subheadline: '760g lightweight body · 12mm slim metal design',
+    presetId: 'travel-mobile',
+    screenTemplate: 'travel-desk',
+    props: ['desk', 'backpack', 'passport', 'phone', 'cable'],
+    callouts: ['760 g lightweight', '12 mm slim metal shell', 'Coffee-shop mobile workflow'],
+    badges: ['Travel', '760g', '12mm', 'Portable'],
+    compliance: ['场景可生活化', '配件和道具是辅助角色', '保留足够文案留白'],
+    appearance: {
+      accent: '#fdba74',
+      backdrop: 'radial-gradient(circle at 18% 22%, rgba(253, 186, 116, 0.22), transparent 26%), linear-gradient(150deg, #5f3b1e 0%, #c88d52 24%, #f0d8b5 100%)',
+      floor: 'linear-gradient(180deg, rgba(255,255,255,0.08), rgba(88, 47, 14, 0.4))',
+      panel: '#f4e8d5',
+      text: '#2c1809',
+    },
+    camera: { rotateX: 10, rotateY: -20, rotateZ: 0, scale: 0.97 },
+    copyLines: ['道具只说明“可带出门”，不要让人误解为超迷你设备。', '包、护照、手机半入镜即可。'],
+    renderHints: ['木桌和皮革/织物材质对比要明显。', '屏幕内容保持轻办公，不要和游戏图重复。'],
+    prompt: prompts.travel,
+  },
+  {
+    id: 'ports-connectivity',
+    label: 'IMG-06 全接口与一线连接',
+    category: 'Amazon 副图',
+    objective: '减少下单前疑虑，直观看清 Mini HDMI、双 USB-C 和 3.5mm。',
+    headline: 'Mini HDMI + Dual USB-C + Audio',
+    subheadline: 'Easy connection for laptop, console and phone workflows',
+    presetId: null,
+    screenTemplate: 'ports-diagram',
+    props: ['ports'],
+    callouts: product.connectivity,
+    badges: ['Ports', 'Mini HDMI', 'Dual USB-C', 'Audio'],
+    compliance: ['允许技术型 callout', '接口顺序必须准确', '布局保持简洁'],
+    appearance: {
+      accent: '#67e8f9',
+      backdrop: 'radial-gradient(circle at 16% 22%, rgba(103, 232, 249, 0.2), transparent 28%), linear-gradient(160deg, #0b1118 0%, #111827 46%, #d5dde5 100%)',
+      floor: 'linear-gradient(180deg, rgba(255,255,255,0.05), rgba(13, 18, 26, 0.55))',
+      panel: '#121a24',
+      text: '#edf6ff',
+    },
+    camera: { rotateX: 8, rotateY: -58, rotateZ: 0, scale: 1.02 },
+    copyLines: ['端口切口需要真实，避免做成概念机风格。', 'callout 走精简技术图，而不是爆炸图。'],
+    renderHints: ['接口区域的边缘光要足够锐利。', '可以单独抬高侧边局部高光，加强加工精度感。'],
+    prompt: prompts.ports,
+  },
+  {
+    id: 'vesa-speakers',
+    label: 'IMG-07 VESA 与影音补充卖点',
+    category: 'Amazon 副图',
+    objective: '补齐 VESA 和双扬声器，建立办公、影音、安装扩展三合一认知。',
+    headline: 'VESA Mount Ready',
+    subheadline: '75 x 75 mm support · Built-in dual speakers',
+    presetId: null,
+    screenTemplate: 'rear-shell',
+    props: ['rear-view'],
+    callouts: ['75 x 75 mm VESA support', 'Built-in dual speakers', 'Large stand structure'],
+    badges: ['VESA', 'Dual Speakers', 'Rear Design'],
+    compliance: ['允许说明型文案', '背部结构要真实', '布局保持留白'],
+    appearance: {
+      accent: '#c4b5fd',
+      backdrop: 'radial-gradient(circle at 16% 24%, rgba(196, 181, 253, 0.16), transparent 26%), linear-gradient(155deg, #0d1017 0%, #202330 40%, #d8dce6 100%)',
+      floor: 'linear-gradient(180deg, rgba(255,255,255,0.06), rgba(11, 14, 20, 0.55))',
+      panel: '#161a24',
+      text: '#f4f7fb',
+    },
+    camera: { rotateX: 12, rotateY: 152, rotateZ: 0, scale: 1.01 },
+    copyLines: ['后壳不能过于花哨，重点是孔位、支架和声学补充信息。', '右侧信息块数量控制在两组以内。'],
+    renderHints: ['背部表面反射更柔和，避免抢掉孔位细节。', 'VESA 区域和支架连接区域要有清晰结构关系。'],
+    prompt: prompts.rear,
+  },
+];
+
+const payload = {
+  generatedAt: new Date().toISOString(),
+  product,
+  summary: {
+    title: 'LuminaDisplay 16-inch Amazon Scene Preview',
+    subtitle: '3D listing scenes derived from product config, scenario overrides and Amazon asset planning.',
+    focus: product.amazonListingFocus,
+    metrics: [
+      { label: 'Panel', value: `${product.screen.panelType} ${product.screen.aspectRatio}` },
+      { label: 'Resolution', value: product.screen.resolution },
+      { label: 'Refresh', value: product.screen.refreshRate },
+      { label: 'Color', value: product.screen.colorGamut },
+      { label: 'Brightness', value: `${product.screen.brightnessNits} nits` },
+      { label: 'Body', value: `${product.physical.bodyMaterial} / ${product.physical.bodyColor}` },
+      { label: 'Dimensions', value: `${product.physical.widthMm} x ${product.physical.heightMm} x ${product.physical.thicknessMm} mm` },
+      { label: 'Weight', value: `${product.physical.weightG} g` },
+    ],
+  },
+  videoStoryboard: [
+    '0-03s: pure-white hero opener with the 16-inch front view and a single line headline.',
+    '03-07s: rotate to the angled premium build shot and highlight metal body plus stand.',
+    '07-12s: transition into the office dual-screen setup showing 16:10 workspace density.',
+    '12-17s: switch to the gaming desk and emphasize 144Hz energy with bright contrast.',
+    '17-21s: move into the travel cafe setup to sell portability and slimness.',
+    '21-25s: isolate the side profile and sweep through Mini HDMI, dual USB-C and audio.',
+    '25-30s: return to hero framing and close on the LuminaDisplay bezel branding.',
+  ],
+  scenes: scenes.map((scene) => ({
+    ...scene,
+    override: scene.presetId ? overrides[scene.presetId] || null : null,
+  })),
+};
+
+fs.mkdirSync(outputDir, { recursive: true });
+fs.writeFileSync(outputFile, JSON.stringify(payload, null, 2));
+console.log(`Scene data written to ${outputFile}`);

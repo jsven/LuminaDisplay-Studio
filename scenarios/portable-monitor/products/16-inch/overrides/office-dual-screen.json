@@ -1,0 +1,12 @@
+﻿{
+  "presetId": "office-dual-screen",
+  "productId": "portable-monitor-16-inch",
+  "cameraDistance": "medium-wide hero framing with enough breathing room for a 16-inch panel and large stand",
+  "screenUiScale": "90%",
+  "pairedDevice": "15-inch business laptop with single-cable USB-C workflow",
+  "branding": {
+    "brandName": "LuminaDisplay",
+    "placement": "bezel-bottom-center",
+    "visible": true
+  }
+}

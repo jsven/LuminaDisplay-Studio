@@ -1,0 +1,26 @@
+﻿{
+  "id": "code-demo",
+  "family": "portable-monitor",
+  "title": "Code Demo",
+  "purpose": "Show coding, dashboards or technical workflows on the portable screen.",
+  "exportTargets": [
+    "amazon-feature-images",
+    "amazon-video",
+    "a-plus"
+  ],
+  "applicableSizes": [
+    "*"
+  ],
+  "defaultHighlights": [
+    "sharp-display",
+    "developer-workflow",
+    "multi-window-productivity"
+  ],
+  "overrideKeys": [
+    "cameraDistance",
+    "screenUiScale",
+    "copyHighlights",
+    "branding"
+  ]
+}
+

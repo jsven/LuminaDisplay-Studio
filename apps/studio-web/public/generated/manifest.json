@@ -1,0 +1,22 @@
+{
+  "generatedAt": "2026-03-31T07:55:34.769Z",
+  "defaultPackId": "portable-monitor-16-inch",
+  "packs": [
+    {
+      "file": "portable-monitor-16-inch.json",
+      "id": "portable-monitor-16-inch",
+      "label": "16 inch",
+      "sizeDirectory": "16-inch",
+      "title": "LuminaDisplay 16-inch Amazon Scene Preview",
+      "subtitle": "3D listing scenes derived from product config, scenario overrides and Amazon asset planning."
+    },
+    {
+      "file": "portable-monitor-07-inch.json",
+      "id": "portable-monitor-07-inch",
+      "label": "7 inch",
+      "sizeDirectory": "07-inch",
+      "title": "LuminaDisplay 7-inch Amazon Scene Preview",
+      "subtitle": "Touch-focused, embedded-friendly listing scenes derived from product config and size-specific overrides."
+    }
+  ]
+}

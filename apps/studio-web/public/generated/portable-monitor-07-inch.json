@@ -1,0 +1,520 @@
+{
+  "generatedAt": "2026-03-31T07:55:34.720Z",
+  "product": {
+    "id": "portable-monitor-07-inch",
+    "family": "portable-monitor",
+    "sizeDirectory": "07-inch",
+    "sizeLabel": "7 inch",
+    "sizeInch": 7,
+    "status": "draft",
+    "modelAsset": "",
+    "branding": {
+      "brandName": "LuminaDisplay",
+      "placement": "bezel-bottom-center",
+      "visible": true
+    },
+    "screen": {
+      "aspectRatio": "16:10",
+      "resolution": "800x1280",
+      "refreshRate": "60Hz",
+      "panelType": "IPS",
+      "brightnessNits": 400,
+      "contrastRatio": "1000:1",
+      "colorGamut": "70% sRGB",
+      "responseTimeMs": 30,
+      "viewingAngle": "178/178/178",
+      "touch": true,
+      "touchType": "full-lamination"
+    },
+    "physical": {
+      "widthMm": 175,
+      "heightMm": 108,
+      "thicknessMm": 9,
+      "weightG": 249,
+      "bodyMaterial": "CNC aluminum alloy",
+      "bodyColor": "black"
+    },
+    "connectivity": [
+      "Mini HDMI x1",
+      "USB-C full-function x1",
+      "USB-C power x1",
+      "3.5mm audio x1"
+    ],
+    "features": [
+      "full lamination touch",
+      "dual speakers",
+      "75x75mm VESA dual-hole mount"
+    ],
+    "amazonListingFocus": [
+      "7-inch IPS full-lamination touch display",
+      "800x1280 compact screen for embedded and control-panel use",
+      "9mm slim CNC metal body with 249g portability",
+      "Mini HDMI plus dual USB-C connectivity for SBC, handheld and mini PC workflows"
+    ],
+    "sharedPresetIds": [
+      "office-dual-screen",
+      "travel-mobile",
+      "gaming-console",
+      "code-demo"
+    ],
+    "sizeOverrideHints": {
+      "cameraDistance": "Use tight framing so the 7-inch panel still feels substantial in product shots.",
+      "uiScale": "Increase UI scale to keep icons and touch targets readable on the compact panel.",
+      "copyDensity": "Focus copy on touch, compactness and embedded-device compatibility rather than large-screen productivity."
+    }
+  },
+  "summary": {
+    "title": "LuminaDisplay 7-inch Amazon Scene Preview",
+    "subtitle": "Touch-focused, embedded-friendly listing scenes derived from product config and size-specific overrides.",
+    "description": "Compact scene pack focused on touch, CNC build, SBC compatibility, compact entertainment and install flexibility.",
+    "focus": [
+      "7-inch IPS full-lamination touch display",
+      "800x1280 compact screen for embedded and control-panel use",
+      "9mm slim CNC metal body with 249g portability",
+      "Mini HDMI plus dual USB-C connectivity for SBC, handheld and mini PC workflows"
+    ],
+    "metrics": [
+      {
+        "label": "Panel",
+        "value": "IPS 16:10"
+      },
+      {
+        "label": "Resolution",
+        "value": "800x1280"
+      },
+      {
+        "label": "Refresh",
+        "value": "60Hz"
+      },
+      {
+        "label": "Color",
+        "value": "70% sRGB"
+      },
+      {
+        "label": "Brightness",
+        "value": "400 nits"
+      },
+      {
+        "label": "Body",
+        "value": "CNC aluminum alloy / black"
+      },
+      {
+        "label": "Dimensions",
+        "value": "175 x 108 x 9 mm"
+      },
+      {
+        "label": "Weight",
+        "value": "249 g"
+      }
+    ]
+  },
+  "videoStoryboard": [
+    "0-03s: pure-white hero opener with the compact 7-inch front view and a short touch-screen headline.",
+    "03-07s: transition into the full-lamination touch shot with a subtle finger tap and ripple feedback.",
+    "07-12s: cut to the compact CNC side-profile shot to sell 9mm slimness and 249g portability.",
+    "12-17s: move into the Raspberry Pi or control-panel setup and show compact dashboard usability.",
+    "17-21s: switch to the handheld or mini-console entertainment scene with a bright compact UI.",
+    "21-25s: isolate the side ports and explain Mini HDMI, dual USB-C and audio support.",
+    "25-30s: close on the rear shell, VESA area and built-in speakers before returning to the hero angle."
+  ],
+  "scenes": [
+    {
+      "id": "hero-main",
+      "label": "IMG-01 主图 Hero",
+      "category": "Amazon 主图",
+      "objective": "突出 7 英寸 IPS 触摸屏的紧凑精致感，同时保持主图合规。",
+      "headline": "7-inch IPS Touch Monitor",
+      "subheadline": "Pure-white hero frame. No copy. No props. Tight framing for a compact product.",
+      "presetId": null,
+      "screenTemplate": "hero-glow",
+      "props": [],
+      "callouts": [],
+      "badges": [
+        "Main Image",
+        "7-inch",
+        "IPS",
+        "Touch"
+      ],
+      "compliance": [
+        "纯白背景",
+        "产品占画面 85%+",
+        "不加文案",
+        "不加配件"
+      ],
+      "appearance": {
+        "accent": "#67e8f9",
+        "backdrop": "radial-gradient(circle at 12% 18%, rgba(103, 232, 249, 0.16), transparent 28%), linear-gradient(145deg, #fbf8f2 0%, #f1e7d8 42%, #ffffff 100%)",
+        "floor": "linear-gradient(180deg, rgba(255,255,255,0.1), rgba(190, 210, 220, 0.22))",
+        "panel": "#f6efe2",
+        "text": "#10151c"
+      },
+      "camera": {
+        "rotateX": 11,
+        "rotateY": -20,
+        "rotateZ": 0,
+        "scale": 1.22
+      },
+      "copyLines": [
+        "小尺寸主图必须用更近的镜头，避免画面发空。",
+        "保持屏幕高亮，但不要盖掉边框与品牌位。"
+      ],
+      "renderHints": [
+        "主图机身比例必须真实，避免把 7 寸做成平板错觉。",
+        "边框边缘高光更锋利，强化 CNC 精度感。"
+      ],
+      "prompt": "Use case: product-mockup\nAsset type: Amazon main image\nPrimary request: create a photorealistic 3D hero render for a compact 7-inch touch portable monitor listing\nScene/backdrop: pure white studio background\nSubject: black 7-inch portable monitor with a slim 9mm CNC aluminum body, thin bezels and a centered LuminaDisplay brand mark on the lower bezel\nStyle/medium: photorealistic 3D product render\nComposition/framing: front-facing hero shot with a slight top-down camera angle; keep the product filling about 88 percent of the frame so the small size still feels substantial\nLighting/mood: clean high-key studio lighting with crisp edge reflections and controlled screen glow\nColor palette: white background, black metal body, cool cyan-blue screen glow\nMaterials/textures: CNC aluminum alloy with subtle brushed reflections; glossy IPS touch surface\nText (verbatim): \"\"\nConstraints: main-image compliant; no props; no cables; no text overlays; no watermark; show only the sold product\nAvoid: empty framing, oversized accessories, stylized illustration look, overexposed screen",
+      "override": null
+    },
+    {
+      "id": "touch-lamination",
+      "label": "IMG-02 全贴合触摸卖点图",
+      "category": "Amazon 副图",
+      "objective": "突出 Full Lamination Touch 是 7 寸型号最关键的差异化卖点。",
+      "headline": "Full Lamination Touch",
+      "subheadline": "Direct, precise interaction for compact interfaces",
+      "presetId": "code-demo",
+      "screenTemplate": "touch-interface",
+      "props": [
+        "finger-touch"
+      ],
+      "callouts": [
+        "Full lamination touch",
+        "Low-parallax direct interaction",
+        "Compact touch UI ready"
+      ],
+      "badges": [
+        "Touch",
+        "Full Lamination",
+        "IPS",
+        "Compact UI"
+      ],
+      "compliance": [
+        "允许交互手势入镜",
+        "手指不能遮挡大部分 UI",
+        "副图文案保持两层结构"
+      ],
+      "appearance": {
+        "accent": "#2dd4bf",
+        "backdrop": "radial-gradient(circle at 16% 18%, rgba(45, 212, 191, 0.18), transparent 26%), linear-gradient(155deg, #0f1720 0%, #183241 38%, #dce8e4 100%)",
+        "floor": "linear-gradient(180deg, rgba(255,255,255,0.04), rgba(15, 23, 32, 0.4))",
+        "panel": "#132532",
+        "text": "#ebfffb"
+      },
+      "camera": {
+        "rotateX": 10,
+        "rotateY": -12,
+        "rotateZ": 0,
+        "scale": 1.14
+      },
+      "copyLines": [
+        "触摸波纹要克制，像真实 UI 反馈，而不是科幻特效。",
+        "紧贴玻璃面的 UI 元素要大且简洁。"
+      ],
+      "renderHints": [
+        "手指边缘做柔和反光，避免显得像塑料手模。",
+        "屏幕玻璃反射保持清爽，触点区域最亮。"
+      ],
+      "prompt": "Use case: product-mockup\nAsset type: Amazon feature image\nPrimary request: create a premium 3D touch-feature render for a 7-inch portable monitor with full lamination touch\nScene/backdrop: clean studio setup with a soft dark-to-teal gradient background\nSubject: compact 7-inch monitor showing a touch-friendly dashboard while a fingertip lightly taps the screen with a subtle ripple effect\nStyle/medium: photorealistic 3D advertising render\nComposition/framing: medium close-up framing; finger enters only partially from one side; keep the UI and touch contact point clearly visible\nLighting/mood: precise premium lighting with clear glass reflections and a focused accent on the touch point\nColor palette: black metal body, teal-blue interface glow, restrained neutral background\nMaterials/textures: laminated glass surface, CNC aluminum shell, clean UI cards and ripple feedback\nText (verbatim): \"Full Lamination Touch\\nDirect, precise interaction for compact interfaces\"\nConstraints: emphasize low-parallax direct touch feel; keep the finger natural and secondary; do not cover most of the screen\nAvoid: exaggerated sci-fi touch beams, cartoon hand styling, cluttered interface, messy reflections",
+      "override": {
+        "presetId": "code-demo",
+        "productId": "portable-monitor-07-inch",
+        "cameraDistance": "tight front shot that emphasizes touch interaction and compact UI density",
+        "screenUiScale": "122%",
+        "copyHighlights": [
+          "Full-lamination touch reduces visual parallax for direct interaction.",
+          "800x1280 resolution suits compact dashboards, control panels and portrait-friendly layouts.",
+          "9mm CNC metal body fits portable kits, embedded projects and diagnostic setups."
+        ],
+        "branding": {
+          "brandName": "LuminaDisplay",
+          "placement": "bezel-bottom-center",
+          "visible": true
+        }
+      }
+    },
+    {
+      "id": "compact-build",
+      "label": "IMG-03 9mm CNC 金属机身",
+      "category": "Amazon 副图",
+      "objective": "突出 9mm、249g 和 CNC 铝合金，让 7 寸产品看起来精密而不是廉价。",
+      "headline": "9mm Slim CNC Metal Body",
+      "subheadline": "175 x 108 mm footprint · 249g lightweight",
+      "presetId": null,
+      "screenTemplate": "material-sheen",
+      "props": [
+        "copy-column"
+      ],
+      "callouts": [
+        "175 x 108 x 9 mm",
+        "249 g lightweight",
+        "CNC aluminum alloy"
+      ],
+      "badges": [
+        "Compact",
+        "9mm",
+        "249g",
+        "Metal"
+      ],
+      "compliance": [
+        "允许特写和文案",
+        "小产品必须控制镜头畸变",
+        "侧边厚度不能失真"
+      ],
+      "appearance": {
+        "accent": "#fbbf24",
+        "backdrop": "radial-gradient(circle at 18% 20%, rgba(251, 191, 36, 0.18), transparent 28%), linear-gradient(160deg, #1b2027 0%, #2a3038 34%, #e4dbcd 100%)",
+        "floor": "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(25, 31, 39, 0.42))",
+        "panel": "#1b222b",
+        "text": "#f7f0df"
+      },
+      "camera": {
+        "rotateX": 15,
+        "rotateY": -40,
+        "rotateZ": 0,
+        "scale": 1.16
+      },
+      "copyLines": [
+        "小尺寸更适合侧边微距特写，CNC 倒角要清晰。",
+        "让机身看起来像精密工具，而不是玩具。"
+      ],
+      "renderHints": [
+        "侧边反光带要窄且利落。",
+        "机身厚度轮廓优先于屏幕内容。"
+      ],
+      "prompt": "Use case: product-mockup\nAsset type: Amazon feature image\nPrimary request: highlight the compact CNC metal build of a 7-inch portable monitor\nScene/backdrop: soft premium studio backdrop with room for text\nSubject: 7-inch CNC aluminum monitor shown in a refined 45-degree angle emphasizing its 9mm side profile\nStyle/medium: photorealistic 3D commercial render\nComposition/framing: tight three-quarter crop with the thin edge and compact footprint clearly visible; leave one side open for text\nLighting/mood: premium showroom lighting with sharp side highlights to show machining quality\nColor palette: graphite black, soft silver edge highlights, warm-neutral backdrop\nMaterials/textures: brushed aluminum, laminated display glass, crisp machined edge reflections\nText (verbatim): \"9mm Slim CNC Metal Body\\n175 x 108 mm footprint | 249g lightweight\"\nConstraints: keep the proportions realistic to 175 x 108 x 9 mm; make the small product look precise and premium rather than toy-like\nAvoid: bulky proportions, cheap plastic feel, cluttered props, overdone mirror reflections",
+      "override": null
+    },
+    {
+      "id": "embedded-control",
+      "label": "IMG-04 树莓派 / 控制面板场景",
+      "category": "Amazon 副图",
+      "objective": "把 7 寸产品和 SBC、mini PC、控制面板、DIY 项目场景强绑定。",
+      "headline": "Built for SBC and Control Panels",
+      "subheadline": "Great for Raspberry Pi, mini PC and custom dashboard projects",
+      "presetId": "office-dual-screen",
+      "screenTemplate": "embedded-dashboard",
+      "props": [
+        "desk",
+        "dev-board",
+        "cable"
+      ],
+      "callouts": [
+        "Raspberry Pi / SBC ready",
+        "Touch-friendly compact dashboard",
+        "Mini HDMI + USB-C connectivity"
+      ],
+      "badges": [
+        "Embedded",
+        "Dashboard",
+        "SBC",
+        "Touch UI"
+      ],
+      "compliance": [
+        "副图可展示开发板",
+        "显示器仍需是视觉主角",
+        "UI 不能过于细小"
+      ],
+      "appearance": {
+        "accent": "#86efac",
+        "backdrop": "radial-gradient(circle at 16% 18%, rgba(134, 239, 172, 0.16), transparent 28%), linear-gradient(150deg, #eef4eb 0%, #c6d7c4 28%, #0f1720 100%)",
+        "floor": "linear-gradient(180deg, rgba(255,255,255,0.07), rgba(51, 72, 54, 0.34))",
+        "panel": "#eff4ea",
+        "text": "#122015"
+      },
+      "camera": {
+        "rotateX": 10,
+        "rotateY": -18,
+        "rotateZ": 0,
+        "scale": 1.06
+      },
+      "copyLines": [
+        "开发板和短线材只做用途说明，不能抢主角。",
+        "界面布局以状态卡片和按钮为主，更符合触摸和控制面板认知。"
+      ],
+      "renderHints": [
+        "PCB 绿色只点到为止，不要把画面变成电子元件广告。",
+        "可让 UI 采用竖向卡片式布局，强化 800x1280 的适配感。"
+      ],
+      "prompt": "Use case: product-mockup\nAsset type: Amazon lifestyle feature image\nPrimary request: show a 7-inch touch monitor used with a Raspberry Pi or compact control-panel workflow\nScene/backdrop: compact technical desk setup with a small development board, short cables and a clean embedded-workspace mood\nSubject: 7-inch touch monitor displaying a compact dashboard beside a Raspberry Pi or mini PC board\nStyle/medium: photorealistic 3D lifestyle render\nComposition/framing: medium close desk shot; monitor remains the hero; board and cable are supporting props only\nLighting/mood: bright controlled lighting that feels precise, technical and reliable\nColor palette: black monitor, green PCB, cool interface tones, neutral desk surface\nMaterials/textures: CNC metal shell, PCB solder-mask finish, crisp dashboard UI, realistic cable materials\nText (verbatim): \"Built for SBC and Control Panels\\nGreat for Raspberry Pi, mini PC and custom dashboard projects\"\nConstraints: make the monitor the main subject; keep the development board compact and secondary; show a UI that feels touch-friendly on a small screen\nAvoid: giant tower PC props, unreadable micro text, messy electronics clutter, sci-fi fantasy circuitry",
+      "override": {
+        "presetId": "office-dual-screen",
+        "productId": "portable-monitor-07-inch",
+        "cameraDistance": "tight desk framing that makes the compact 7-inch panel feel deliberate and readable",
+        "screenUiScale": "120%",
+        "pairedDevice": "Raspberry Pi, mini PC or a 13-inch laptop showing a secondary dashboard",
+        "branding": {
+          "brandName": "LuminaDisplay",
+          "placement": "bezel-bottom-center",
+          "visible": true
+        }
+      }
+    },
+    {
+      "id": "gaming-compact",
+      "label": "IMG-05 掌机与迷你娱乐设备场景",
+      "category": "Amazon 副图",
+      "objective": "突出小尺寸娱乐和掌机/迷你主机兼容，而不是强调高刷电竞。",
+      "headline": "Compact Entertainment Screen",
+      "subheadline": "Mini HDMI ready with bright IPS color",
+      "presetId": "gaming-console",
+      "screenTemplate": "retro-console",
+      "props": [
+        "console"
+      ],
+      "callouts": [
+        "Compact entertainment setup",
+        "400 nits bright IPS",
+        "Mini HDMI ready"
+      ],
+      "badges": [
+        "Gaming",
+        "Handheld",
+        "Portable",
+        "IPS"
+      ],
+      "compliance": [
+        "避免高刷电竞暗示",
+        "强调便携娱乐和清晰显示",
+        "设备尺寸关系要真实"
+      ],
+      "appearance": {
+        "accent": "#a78bfa",
+        "backdrop": "radial-gradient(circle at 18% 18%, rgba(167, 139, 250, 0.18), transparent 26%), radial-gradient(circle at 82% 24%, rgba(244, 114, 182, 0.14), transparent 18%), linear-gradient(160deg, #070d15 0%, #111b2b 42%, #22273a 100%)",
+        "floor": "linear-gradient(180deg, rgba(255,255,255,0.04), rgba(11, 16, 24, 0.58))",
+        "panel": "#12192a",
+        "text": "#f5f0ff"
+      },
+      "camera": {
+        "rotateX": 11,
+        "rotateY": -22,
+        "rotateZ": 0,
+        "scale": 1.08
+      },
+      "copyLines": [
+        "7 寸更适合掌机、复古主机、迷你娱乐设备的陪伴屏叙事。",
+        "不要在文案里暗示 144Hz 或电竞级响应。"
+      ],
+      "renderHints": [
+        "画面亮度集中在屏幕中央，掌机放右下角做连接提示。",
+        "游戏 UI 用大图标和鲜明色块，适合小屏阅读。"
+      ],
+      "prompt": "Use case: product-mockup\nAsset type: Amazon gaming feature image\nPrimary request: show a 7-inch portable monitor as a compact entertainment screen for handheld and mini-console setups\nScene/backdrop: dark premium setup with a handheld console or mini gaming device near the display\nSubject: compact 7-inch black monitor showing a bright retro or handheld-style game UI, with the paired console visible beside it\nStyle/medium: photorealistic 3D advertising render\nComposition/framing: tight dynamic framing that keeps both the monitor and the small paired device in one compact story\nLighting/mood: cinematic but restrained lighting, with the screen as the brightest element\nColor palette: dark body, vivid teal and magenta accents, bright retro game colors on screen\nMaterials/textures: metal shell, glossy display glass, realistic handheld plastic and controls\nText (verbatim): \"Compact Entertainment Screen\\nMini HDMI ready with bright IPS color\"\nConstraints: do not imply high-refresh esports performance; emphasize portability and clear visibility instead; keep the setup believable and compact\nAvoid: giant RGB battlestation look, extreme motion blur, oversized controllers, noisy backgrounds",
+      "override": {
+        "presetId": "gaming-console",
+        "productId": "portable-monitor-07-inch",
+        "cameraDistance": "tight entertainment framing that keeps the 7-inch display and paired handheld device in one compact story",
+        "pairedDevice": "retro console, handheld emulator or mini console placed beside the display",
+        "screenContent": "bright retro platformer or handheld-game UI with bold icons sized clearly for a 7-inch panel",
+        "branding": {
+          "brandName": "LuminaDisplay",
+          "placement": "bezel-bottom-center",
+          "visible": true
+        }
+      }
+    },
+    {
+      "id": "ports-connectivity",
+      "label": "IMG-06 全接口与一线连接",
+      "category": "Amazon 副图",
+      "objective": "清晰展示紧凑机身下依然完整的接口能力。",
+      "headline": "Mini HDMI + Dual USB-C + Audio",
+      "subheadline": "Ready for embedded, handheld and mini PC workflows",
+      "presetId": null,
+      "screenTemplate": "ports-diagram",
+      "props": [
+        "ports"
+      ],
+      "callouts": [
+        "Mini HDMI x1",
+        "USB-C full-function x1",
+        "USB-C power x1",
+        "3.5mm audio x1"
+      ],
+      "badges": [
+        "Ports",
+        "Mini HDMI",
+        "Dual USB-C",
+        "Audio"
+      ],
+      "compliance": [
+        "允许技术型 callout",
+        "接口顺序必须准确",
+        "小机身的端口尺度要真实"
+      ],
+      "appearance": {
+        "accent": "#67e8f9",
+        "backdrop": "radial-gradient(circle at 16% 22%, rgba(103, 232, 249, 0.18), transparent 28%), linear-gradient(160deg, #0c1219 0%, #131c28 46%, #d9e3ea 100%)",
+        "floor": "linear-gradient(180deg, rgba(255,255,255,0.05), rgba(12, 18, 25, 0.55))",
+        "panel": "#121b25",
+        "text": "#edf8ff"
+      },
+      "camera": {
+        "rotateX": 9,
+        "rotateY": -60,
+        "rotateZ": 0,
+        "scale": 1.1
+      },
+      "copyLines": [
+        "小尺寸端口位更容易做错比例，切口深度和间距都要克制。",
+        "尽量用技术图式留白，不要做拥挤爆炸图。"
+      ],
+      "renderHints": [
+        "侧边高光要锐，突出 CNC 端口切边。",
+        "端口标签和连线尽量简短。"
+      ],
+      "prompt": "Use case: product-mockup\nAsset type: Amazon infographic feature image\nPrimary request: create a clean 3D technical render showing the full connectivity of a 7-inch touch monitor\nScene/backdrop: minimal dark-to-light gradient technical backdrop with clear callout space\nSubject: side-profile close-up of the 7-inch monitor showing Mini HDMI, full-function USB-C, power USB-C and 3.5mm audio\nStyle/medium: photorealistic 3D technical product render\nComposition/framing: tight side-angle crop on the compact port area with minimal, premium callouts\nLighting/mood: precise detail lighting with crisp edge highlights and visible connector depth\nColor palette: black metal body, cool cyan callout accents, neutral technical background\nMaterials/textures: machined metal sidewall, realistic connector cutouts, subtle brushed finish\nText (verbatim): \"Mini HDMI + Dual USB-C + Audio\\nReady for embedded, handheld and mini PC workflows\"\nConstraints: maintain accurate port spacing for a compact 7-inch device; keep the graphic premium and sparse\nAvoid: cluttered exploded view, glowing fake ports, inaccurate connector scale, overloaded diagram graphics",
+      "override": null
+    },
+    {
+      "id": "vesa-speakers",
+      "label": "IMG-07 VESA 与双扬声器",
+      "category": "Amazon 副图",
+      "objective": "补齐安装扩展和双扬声器卖点，强调这块小屏也适合固定部署。",
+      "headline": "VESA Mount Ready",
+      "subheadline": "75 x 75 mm support · Built-in dual speakers",
+      "presetId": null,
+      "screenTemplate": "rear-shell",
+      "props": [
+        "rear-view"
+      ],
+      "callouts": [
+        "75 x 75 mm VESA support",
+        "Built-in dual speakers",
+        "Compact rear-shell structure"
+      ],
+      "badges": [
+        "VESA",
+        "Dual Speakers",
+        "Rear Design"
+      ],
+      "compliance": [
+        "允许说明型文案",
+        "后壳结构必须真实",
+        "布局保持简洁和专业"
+      ],
+      "appearance": {
+        "accent": "#93c5fd",
+        "backdrop": "radial-gradient(circle at 16% 24%, rgba(147, 197, 253, 0.16), transparent 26%), linear-gradient(155deg, #0f131b 0%, #202636 40%, #d8dee7 100%)",
+        "floor": "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(11, 15, 21, 0.55))",
+        "panel": "#171c26",
+        "text": "#f4f8fd"
+      },
+      "camera": {
+        "rotateX": 12,
+        "rotateY": 150,
+        "rotateZ": 0,
+        "scale": 1.1
+      },
+      "copyLines": [
+        "VESA 和双扬声器的说明可以让买家跳出“只能手持”的认知。",
+        "后壳信息密度不要太高，突出孔位和结构就够。"
+      ],
+      "renderHints": [
+        "背壳高光比正面更柔和，保住孔位细节。",
+        "让扬声器和 VESA 的层级关系清晰。"
+      ],
+      "prompt": "Use case: product-mockup\nAsset type: Amazon feature image\nPrimary request: highlight VESA mounting support and built-in dual speakers on a 7-inch portable touch monitor\nScene/backdrop: premium neutral studio background with compact infographic layout zones\nSubject: rear three-quarter view of the 7-inch monitor showing the stand structure, VESA area and speaker story\nStyle/medium: photorealistic 3D commercial render\nComposition/framing: rear product view on the left with clean text blocks on the right, designed for easy reading\nLighting/mood: crisp neutral studio lighting with sharp rear-shell highlights and clean edge separation\nColor palette: black and graphite body tones, restrained blue-gray accent graphics, neutral backdrop\nMaterials/textures: brushed aluminum rear shell, precise mount-hole detail, matte support surfaces\nText (verbatim): \"VESA Mount Ready\\n75 x 75 mm support | Built-in dual speakers\"\nConstraints: show the rear shell clearly; keep the layout clean and compact; make the product feel serious and install-ready\nAvoid: decorative fake vents, random screws, noisy callouts, toy-like proportions",
+      "override": null
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+﻿{
+  "id": "office-dual-screen",
+  "family": "portable-monitor",
+  "title": "Office Dual Screen",
+  "purpose": "Show portable monitor as a notebook companion for work and productivity.",
+  "exportTargets": [
+    "amazon-main-images",
+    "amazon-feature-images",
+    "amazon-video"
+  ],
+  "applicableSizes": [
+    "*"
+  ],
+  "defaultHighlights": [
+    "lightweight",
+    "second-screen",
+    "type-c-connectivity"
+  ],
+  "overrideKeys": [
+    "cameraDistance",
+    "screenUiScale",
+    "pairedDevice",
+    "branding"
+  ]
+}
+

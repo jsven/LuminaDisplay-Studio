@@ -1,0 +1,37 @@
+﻿{
+  "family": "portable-monitor",
+  "directoryRule": "Each size gets its own directory under products. Shared scenes stay in presets. Size-specific differences stay in overrides.",
+  "sizes": [
+    {
+      "id": "07-inch",
+      "label": "7 inch",
+      "sizeInch": 7
+    },
+    {
+      "id": "13-5-inch",
+      "label": "13.5 inch",
+      "sizeInch": 13.5
+    },
+    {
+      "id": "14-inch",
+      "label": "14 inch",
+      "sizeInch": 14
+    },
+    {
+      "id": "15-6-inch",
+      "label": "15.6 inch",
+      "sizeInch": 15.6
+    },
+    {
+      "id": "16-inch",
+      "label": "16 inch",
+      "sizeInch": 16
+    }
+  ],
+  "sharedPresetIds": [
+    "office-dual-screen",
+    "travel-mobile",
+    "gaming-console",
+    "code-demo"
+  ]
+}

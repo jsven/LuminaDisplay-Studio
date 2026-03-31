@@ -1,0 +1,12 @@
+﻿{
+  "presetId": "travel-mobile",
+  "productId": "portable-monitor-16-inch",
+  "cameraDistance": "medium framing that keeps the 16-inch monitor portable-looking instead of oversized",
+  "propsLayout": "coffee shop table with backpack, passport, smartphone, notebook and USB-C cable",
+  "screenUiScale": "88%",
+  "branding": {
+    "brandName": "LuminaDisplay",
+    "placement": "bezel-bottom-center",
+    "visible": true
+  }
+}

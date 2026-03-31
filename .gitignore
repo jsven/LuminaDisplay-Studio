@@ -1,0 +1,36 @@
+.idea/
+node_modules/
+.vscode/
+*.map
+.DS_Store
+.sourcemaps
+dist/
+
+
+# Android 建议忽略的文件
+android/build/
+android/.gradle/
+android/app/build/
+android/app/src/main/assets/public/
+android/app/src/main/assets/capsite.json
+
+# 本地环境变量和密钥（非常重要，不要提交）
+android/local.properties
+android/captun.json
+android/app/google-services.json (如果你需要根据环境不同而变化)
+# 忽略 Android 签名文件
+android/app/*.jks
+android/app/*.keystore
+
+# iOS 建议忽略的文件
+ios/App/build/
+ios/App/Pods/
+ios/App/Podfile.lock
+ios/App/App/public
+# 忽略 Xcode 个人设置
+ios/App/*.xcworkspace/xcuserdata/
+ios/App/*.xcodeproj/xcuserdata/
+ios/App/*.xcodeproj/project.xcworkspace/
+
+app-package
+.generated-install

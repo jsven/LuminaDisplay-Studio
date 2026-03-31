@@ -1,0 +1,62 @@
+﻿{
+  "id": "portable-monitor-16-inch",
+  "family": "portable-monitor",
+  "sizeDirectory": "16-inch",
+  "sizeLabel": "16 inch",
+  "sizeInch": 16,
+  "status": "draft",
+  "modelAsset": "",
+  "branding": {
+    "brandName": "LuminaDisplay",
+    "placement": "bezel-bottom-center",
+    "visible": true
+  },
+  "screen": {
+    "aspectRatio": "16:10",
+    "resolution": "2560x1600",
+    "refreshRate": "144Hz",
+    "panelType": "IPS",
+    "brightnessNits": 400,
+    "contrastRatio": "1000:1",
+    "colorGamut": "100% sRGB",
+    "responseTimeMs": 9,
+    "viewingAngle": "178/178/178",
+    "touch": false
+  },
+  "physical": {
+    "widthMm": 355,
+    "heightMm": 228,
+    "thicknessMm": 12,
+    "weightG": 760,
+    "bodyMaterial": "CNC aluminum alloy",
+    "bodyColor": "black"
+  },
+  "connectivity": [
+    "Mini HDMI x1",
+    "USB-C full-function x1",
+    "USB-C power x1",
+    "3.5mm audio x1"
+  ],
+  "features": [
+    "large integrated stand",
+    "dual speakers",
+    "75x75mm VESA dual-hole mount"
+  ],
+  "amazonListingFocus": [
+    "16-inch 2.5K IPS productivity screen",
+    "144Hz smooth gaming and scrolling",
+    "12mm slim metal body with 760g portability",
+    "full connectivity for notebook, console and mobile workflows"
+  ],
+  "sharedPresetIds": [
+    "office-dual-screen",
+    "travel-mobile",
+    "gaming-console",
+    "code-demo"
+  ],
+  "sizeOverrideHints": {
+    "cameraDistance": "Use wider composition to show screen scale, thin bezels and the large stand.",
+    "uiScale": "Keep UI scale slightly smaller so the 16-inch panel area still feels spacious.",
+    "copyDensity": "Allow more comparison copy because the 16-inch product is positioned as a premium productivity and gaming model."
+  }
+}

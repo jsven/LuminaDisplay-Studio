@@ -1,0 +1,16 @@
+﻿{
+  "presetId": "code-demo",
+  "productId": "portable-monitor-07-inch",
+  "cameraDistance": "tight front shot that emphasizes touch interaction and compact UI density",
+  "screenUiScale": "122%",
+  "copyHighlights": [
+    "Full-lamination touch reduces visual parallax for direct interaction.",
+    "800x1280 resolution suits compact dashboards, control panels and portrait-friendly layouts.",
+    "9mm CNC metal body fits portable kits, embedded projects and diagnostic setups."
+  ],
+  "branding": {
+    "brandName": "LuminaDisplay",
+    "placement": "bezel-bottom-center",
+    "visible": true
+  }
+}

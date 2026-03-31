@@ -1,0 +1,38 @@
+﻿{
+  "id": "portable-monitor-14-inch",
+  "family": "portable-monitor",
+  "sizeDirectory": "14-inch",
+  "sizeLabel": "14 inch",
+  "sizeInch": 14,
+  "status": "draft",
+  "modelAsset": "",
+  "branding": {
+    "brandName": "LuminaDisplay",
+    "placement": "bezel-bottom-center",
+    "visible": true
+  },
+  "screen": {
+    "aspectRatio": "",
+    "resolution": "",
+    "refreshRate": ""
+  },
+  "physical": {
+    "widthMm": null,
+    "heightMm": null,
+    "thicknessMm": null,
+    "weightG": null
+  },
+  "connectivity": [],
+  "sharedPresetIds": [
+    "office-dual-screen",
+    "travel-mobile",
+    "gaming-console",
+    "code-demo"
+  ],
+  "sizeOverrideHints": {
+    "cameraDistance": "Use standard portable-monitor framing.",
+    "uiScale": "Use balanced UI scale for productivity scenes."
+  }
+}
+
+

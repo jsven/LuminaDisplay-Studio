@@ -1,0 +1,38 @@
+﻿{
+  "id": "portable-monitor-15-6-inch",
+  "family": "portable-monitor",
+  "sizeDirectory": "15-6-inch",
+  "sizeLabel": "15.6 inch",
+  "sizeInch": 15.6,
+  "status": "draft",
+  "modelAsset": "",
+  "branding": {
+    "brandName": "LuminaDisplay",
+    "placement": "bezel-bottom-center",
+    "visible": true
+  },
+  "screen": {
+    "aspectRatio": "",
+    "resolution": "",
+    "refreshRate": ""
+  },
+  "physical": {
+    "widthMm": null,
+    "heightMm": null,
+    "thicknessMm": null,
+    "weightG": null
+  },
+  "connectivity": [],
+  "sharedPresetIds": [
+    "office-dual-screen",
+    "travel-mobile",
+    "gaming-console",
+    "code-demo"
+  ],
+  "sizeOverrideHints": {
+    "cameraDistance": "Allow wider hero frames and multi-device setups.",
+    "uiScale": "Reduce UI scale slightly to preserve screen composition."
+  }
+}
+
+

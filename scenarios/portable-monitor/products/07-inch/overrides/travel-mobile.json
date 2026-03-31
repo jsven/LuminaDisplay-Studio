@@ -1,0 +1,12 @@
+﻿{
+  "presetId": "travel-mobile",
+  "productId": "portable-monitor-07-inch",
+  "cameraDistance": "very tight framing with toolkit-style props so the compact body reads as ultra portable",
+  "propsLayout": "small sling bag, power bank, phone, short USB-C cable and compact accessories",
+  "screenUiScale": "118%",
+  "branding": {
+    "brandName": "LuminaDisplay",
+    "placement": "bezel-bottom-center",
+    "visible": true
+  }
+}

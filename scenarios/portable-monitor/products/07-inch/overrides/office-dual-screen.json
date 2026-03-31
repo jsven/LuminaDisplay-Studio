@@ -1,0 +1,12 @@
+﻿{
+  "presetId": "office-dual-screen",
+  "productId": "portable-monitor-07-inch",
+  "cameraDistance": "tight desk framing that makes the compact 7-inch panel feel deliberate and readable",
+  "screenUiScale": "120%",
+  "pairedDevice": "Raspberry Pi, mini PC or a 13-inch laptop showing a secondary dashboard",
+  "branding": {
+    "brandName": "LuminaDisplay",
+    "placement": "bezel-bottom-center",
+    "visible": true
+  }
+}

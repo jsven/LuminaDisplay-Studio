@@ -1,0 +1,16 @@
+﻿{
+  "presetId": "code-demo",
+  "productId": "portable-monitor-16-inch",
+  "cameraDistance": "medium-wide desk setup that shows how the 16:10 canvas fits development and analysis workflows",
+  "screenUiScale": "86%",
+  "copyHighlights": [
+    "16:10 canvas shows more code, timeline and spreadsheet rows.",
+    "2560x1600 resolution keeps text sharp for long work sessions.",
+    "100% sRGB and 400 nits support review, design and content workflows."
+  ],
+  "branding": {
+    "brandName": "LuminaDisplay",
+    "placement": "bezel-bottom-center",
+    "visible": true
+  }
+}

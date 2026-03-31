@@ -1,0 +1,12 @@
+﻿{
+  "presetId": "gaming-console",
+  "productId": "portable-monitor-07-inch",
+  "cameraDistance": "tight entertainment framing that keeps the 7-inch display and paired handheld device in one compact story",
+  "pairedDevice": "retro console, handheld emulator or mini console placed beside the display",
+  "screenContent": "bright retro platformer or handheld-game UI with bold icons sized clearly for a 7-inch panel",
+  "branding": {
+    "brandName": "LuminaDisplay",
+    "placement": "bezel-bottom-center",
+    "visible": true
+  }
+}

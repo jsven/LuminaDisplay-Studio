@@ -1,0 +1,12 @@
+﻿{
+  "presetId": "gaming-console",
+  "productId": "portable-monitor-16-inch",
+  "cameraDistance": "dynamic medium-close framing that emphasizes screen brightness and motion without hiding the slim body",
+  "pairedDevice": "handheld console or Switch-style device placed to the lower right of the monitor",
+  "screenContent": "high-frame-rate action racing or shooter gameplay with strong contrast, vivid HUD and visible motion energy",
+  "branding": {
+    "brandName": "LuminaDisplay",
+    "placement": "bezel-bottom-center",
+    "visible": true
+  }
+}

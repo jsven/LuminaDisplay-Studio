@@ -1,0 +1,26 @@
+﻿{
+  "id": "travel-mobile",
+  "family": "portable-monitor",
+  "title": "Travel Mobile",
+  "purpose": "Show portability, bag-friendly setup and light work usage on the go.",
+  "exportTargets": [
+    "amazon-main-images",
+    "amazon-feature-images",
+    "amazon-video"
+  ],
+  "applicableSizes": [
+    "*"
+  ],
+  "defaultHighlights": [
+    "portable",
+    "thin-design",
+    "travel-setup"
+  ],
+  "overrideKeys": [
+    "cameraDistance",
+    "propsLayout",
+    "screenUiScale",
+    "branding"
+  ]
+}
+
