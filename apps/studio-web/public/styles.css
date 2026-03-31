@@ -1737,3 +1737,42 @@ pre {
   }
 }
 
+
+.panel-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stage-panel:fullscreen {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+  width: 100vw;
+  height: 100vh;
+  padding: 12px;
+  border-radius: 0;
+  box-shadow: none;
+  background: #05070b;
+}
+
+.stage-panel:fullscreen .panel-toolbar {
+  margin-bottom: 0;
+}
+
+.stage-panel:fullscreen .scene-stage {
+  min-height: 0;
+  height: 100%;
+  border-radius: 20px;
+}
+
+.stage-panel:fullscreen .three-stage {
+  min-height: 100%;
+}
+
+@media (max-width: 720px) {
+  .panel-toolbar__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

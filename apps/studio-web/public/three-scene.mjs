@@ -51,59 +51,59 @@ function drawScreenHud(ctx, canvas, product, scene, elapsed = 99) {
   const chips = hud.chips.slice(0, 4).map((item) => truncateLabel(item, 24));
   const details = hud.details.slice(0, 5).map((item) => truncateLabel(item, 40));
   const chipY = 28;
-  const chipHeight = 42;
+  const chipHeight = 54;
   let chipX = 28;
 
-  const headerProgress = regionRevealProgress(elapsed, 0.02, 0.45);
-  const chipsProgress = chips.map((_, index) => regionRevealProgress(elapsed, 0.28 + index * 0.12, 0.35));
-  const panelProgress = regionRevealProgress(elapsed, 0.76, 0.46);
-  const detailProgress = details.map((_, index) => regionRevealProgress(elapsed, 0.92 + index * 0.1, 0.28));
-  const footerProgress = regionRevealProgress(elapsed, 1.36, 0.38);
+  const headerProgress = regionRevealProgress(elapsed, 0.08, 0.9);
+  const chipsProgress = chips.map((_, index) => regionRevealProgress(elapsed, 0.78 + index * 0.24, 0.58));
+  const panelProgress = regionRevealProgress(elapsed, 1.72, 0.82);
+  const detailProgress = details.map((_, index) => regionRevealProgress(elapsed, 2.12 + index * 0.2, 0.46));
+  const footerProgress = regionRevealProgress(elapsed, 3.18, 0.72);
 
   withReveal(ctx, headerProgress, 26, () => {
-    fillRoundedRect(ctx, 26, 22, 420, 84, 20, 'rgba(7, 14, 24, 0.42)');
+    fillRoundedRect(ctx, 24, 18, 520, 100, 22, 'rgba(7, 14, 24, 0.46)');
     ctx.fillStyle = 'rgba(255,255,255,0.95)';
-    ctx.font = '600 26px sans-serif';
-    ctx.fillText(hud.title, 46, 56);
+    ctx.font = '700 34px sans-serif';
+    ctx.fillText(hud.title, 44, 58);
     ctx.fillStyle = 'rgba(255,255,255,0.76)';
-    ctx.font = '500 17px sans-serif';
-    ctx.fillText(truncateLabel(hud.subtitle, 54), 46, 84);
+    ctx.font = '500 21px sans-serif';
+    ctx.fillText(truncateLabel(hud.subtitle, 50), 44, 92);
   });
 
-  ctx.font = '600 18px sans-serif';
+  ctx.font = '700 23px sans-serif';
   chips.forEach((spec, index) => {
     const progress = chipsProgress[index];
     const width = Math.max(112, Math.min(230, 34 + spec.length * 11));
     withReveal(ctx, progress, 20, () => {
-      fillRoundedRect(ctx, chipX, chipY + 92, width, chipHeight, 21, 'rgba(255,255,255,0.16)');
+      fillRoundedRect(ctx, chipX, chipY + 108, width, chipHeight, 22, 'rgba(255,255,255,0.18)');
       ctx.fillStyle = '#f4fbff';
-      ctx.fillText(spec, chipX + 18, chipY + 120);
+      ctx.fillText(spec, chipX + 20, chipY + 143);
     });
     chipX += width + 12;
   });
 
-  const panelX = canvas.width - 360;
+  const panelX = canvas.width - 430;
   withReveal(ctx, panelProgress, 28, () => {
-    fillRoundedRect(ctx, panelX, 24, 332, 194, 22, 'rgba(7, 14, 24, 0.34)');
+    fillRoundedRect(ctx, panelX, 20, 390, 248, 24, 'rgba(7, 14, 24, 0.38)');
     ctx.fillStyle = 'rgba(255,255,255,0.88)';
-    ctx.font = '700 18px sans-serif';
-    ctx.fillText(hud.panelTitle, panelX + 20, 54);
+    ctx.font = '700 22px sans-serif';
+    ctx.fillText(hud.panelTitle, panelX + 22, 58);
   });
 
-  ctx.font = '500 17px sans-serif';
+  ctx.font = '500 20px sans-serif';
   details.forEach((spec, index) => {
     withReveal(ctx, detailProgress[index], 16, () => {
-      fillRoundedRect(ctx, panelX + 18, 70 + index * 28, 294, 22, 11, index % 2 === 0 ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.07)');
+      fillRoundedRect(ctx, panelX + 20, 78 + index * 34, 346, 26, 12, index % 2 === 0 ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.07)');
       ctx.fillStyle = 'rgba(255,255,255,0.82)';
-      ctx.fillText(spec, panelX + 30, 86 + index * 28);
+      ctx.fillText(spec, panelX + 34, 98 + index * 34);
     });
   });
 
   withReveal(ctx, footerProgress, 18, () => {
-    fillRoundedRect(ctx, 26, canvas.height - 76, 620, 46, 18, 'rgba(7, 14, 24, 0.34)');
+    fillRoundedRect(ctx, 24, canvas.height - 86, 760, 58, 20, 'rgba(7, 14, 24, 0.38)');
     ctx.fillStyle = 'rgba(255,255,255,0.84)';
-    ctx.font = '500 18px sans-serif';
-    ctx.fillText(truncateLabel(hud.footer, 70), 46, canvas.height - 46);
+    ctx.font = '500 22px sans-serif';
+    ctx.fillText(truncateLabel(hud.footer, 66), 44, canvas.height - 50);
   });
 }
 
@@ -526,7 +526,7 @@ export class PortableMonitorScene {
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 3));
     this.renderer.domElement.className = 'three-stage__canvas-surface';
     this.renderer.domElement.style.touchAction = 'none';
 
@@ -1115,11 +1115,11 @@ export class PortableMonitorScene {
   }
 
   positionCamera(product, scene) {
-    const distance = product.sizeInch >= 15 ? 4.9 : 3.8;
+    const distance = product.sizeInch >= 15 ? 4.2 : 3.2;
     this.camera.position.set(scene.id === 'ports-connectivity' ? 2.2 : 0.22, product.sizeInch <= 7 ? 0.58 : 0.76, distance);
-    if (scene.id === 'vesa-speakers') this.camera.position.set(0.18, 0.72, product.sizeInch <= 7 ? 3.6 : 4.6);
-    if (scene.id === 'touch-lamination') this.camera.position.set(0.46, 0.56, 3.2);
-    if (scene.id === 'embedded-control') this.camera.position.set(0.14, 0.64, 3.8);
+    if (scene.id === 'vesa-speakers') this.camera.position.set(0.18, 0.72, product.sizeInch <= 7 ? 3.05 : 4.0);
+    if (scene.id === 'touch-lamination') this.camera.position.set(0.34, 0.52, 2.8);
+    if (scene.id === 'embedded-control') this.camera.position.set(0.08, 0.6, 3.25);
 
     this.cameraTarget.set(0, 0.02, 0.12);
     if (scene.id === 'ports-connectivity') this.cameraTarget.set(0.18, 0.03, 0.02);
@@ -1179,7 +1179,7 @@ export class PortableMonitorScene {
     const { clientWidth, clientHeight } = this.container;
     if (!clientWidth || !clientHeight) return;
 
-    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 3);
     const targetWidth = Math.floor(clientWidth * pixelRatio);
     const targetHeight = Math.floor(clientHeight * pixelRatio);
 
@@ -1213,6 +1213,8 @@ export class PortableMonitorScene {
     this.renderer.dispose();
   }
 }
+
+
 
 
 

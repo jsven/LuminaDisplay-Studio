@@ -3,7 +3,7 @@
 const refs = {};
 const DEFAULT_RENDER_SETTINGS = {
   autoRotate: true,
-  fov: 32,
+  fov: 28,
   lightBoost: 1,
   metalness: 0.82,
   propsVisible: true,
@@ -128,6 +128,7 @@ function bindEvents() {
   refs.downloadSceneBtn?.addEventListener('click', downloadCurrentScene);
   refs.exportPngBtn?.addEventListener('click', exportCurrentPng);
   refs.exportVideoBtn?.addEventListener('click', exportPreviewVideo);
+  refs.fullscreenBtn?.addEventListener('click', toggleStageFullscreen);
   refs.resetViewBtn?.addEventListener('click', resetCurrentView);
   refs.previewProgressInput?.addEventListener('input', () => {
     const duration = Math.max(state.preview.duration, 1);
@@ -142,6 +143,8 @@ function bindEvents() {
     jumpToSegment(segmentIndex);
   });
 
+  document.addEventListener('fullscreenchange', updateFullscreenButton);
+
   window.addEventListener('keydown', (event) => {
     if (!state.data) return;
     if (event.key === 'ArrowLeft') selectScene(state.sceneIndex - 1, { syncPreview: true });
@@ -154,6 +157,27 @@ function bindEvents() {
   });
 }
 
+
+function toggleStageFullscreen() {
+  if (!refs.stagePanel || !document.fullscreenEnabled) {
+    setTransientStatus('Fullscreen is not available in this browser');
+    return;
+  }
+
+  if (document.fullscreenElement === refs.stagePanel) {
+    document.exitFullscreen();
+    return;
+  }
+
+  refs.stagePanel.requestFullscreen().catch(() => {
+    setTransientStatus('Unable to enter fullscreen');
+  });
+}
+
+function updateFullscreenButton() {
+  if (!refs.fullscreenBtn || !refs.stagePanel) return;
+  refs.fullscreenBtn.textContent = document.fullscreenElement === refs.stagePanel ? 'Exit Fullscreen' : 'Fullscreen';
+}
 function bindRenderControls() {
   const ranged = [
     ['lightBoostInput', 'lightBoostValue', 2],
@@ -440,7 +464,7 @@ async function exportPreviewVideo() {
   }
 
   const chunks = [];
-  const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 8_000_000 });
+  const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 16_000_000 });
   recorder.ondataavailable = (event) => {
     if (event.data && event.data.size > 0) chunks.push(event.data);
   };
@@ -603,6 +627,9 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+
+
+
 
 
 

@@ -32,13 +32,16 @@
 
       <main class="workspace">
         <section class="preview-column">
-          <div class="panel stage-panel">
+          <div class="panel stage-panel" id="stagePanel">
             <div class="panel-toolbar">
               <div>
                 <span class="eyebrow" id="sceneCategory">Scene</span>
                 <h2 id="sceneLabel">Loading...</h2>
               </div>
-              <div class="scene-index-badge" id="sceneIndexBadge">0 / 0</div>
+              <div class="panel-toolbar__actions">
+                <div class="scene-index-badge" id="sceneIndexBadge">0 / 0</div>
+                <button id="toggleFullscreenBtn" class="secondary-button" type="button">Fullscreen</button>
+              </div>
             </div>
             <div id="sceneStage" class="scene-stage is-loading">
               <p class="loading-copy">Loading scene pack...</p>
@@ -87,7 +90,7 @@
               </label>
               <label class="control-field">
                 <span>Camera FOV <strong id="fovValue">32</strong></span>
-                <input id="fovInput" type="range" min="24" max="52" step="1" value="32" />
+                <input id="fovInput" type="range" min="24" max="52" step="1" value="28" />
               </label>
               <div class="toggle-grid">
                 <label class="toggle-field">
@@ -170,6 +173,8 @@
     <script type="module" src="./app.mjs"></script>
   </body>
 </html>
+
+
 
 
 
