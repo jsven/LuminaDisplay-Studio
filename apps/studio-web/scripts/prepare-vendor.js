@@ -2,15 +2,16 @@
 const path = require('node:path');
 
 const appRoot = path.resolve(__dirname, '..');
-const sourceDir = path.join(appRoot, 'node_modules', 'three', 'build');
 const targetDir = path.join(appRoot, 'public', 'vendor');
-const files = ['three.module.js', 'three.core.js'];
+const copies = [
+  { from: path.join(appRoot, 'node_modules', 'three', 'build', 'three.module.js'), to: 'three.module.js' },
+  { from: path.join(appRoot, 'node_modules', 'three', 'build', 'three.core.js'), to: 'three.core.js' },
+];
 
 fs.mkdirSync(targetDir, { recursive: true });
 
-for (const file of files) {
-  const source = path.join(sourceDir, file);
-  const target = path.join(targetDir, file);
-  fs.copyFileSync(source, target);
-  console.log(`Copied ${file} -> ${target}`);
+for (const entry of copies) {
+  const target = path.join(targetDir, entry.to);
+  fs.copyFileSync(entry.from, target);
+  console.log(`Copied ${entry.to} -> ${target}`);
 }

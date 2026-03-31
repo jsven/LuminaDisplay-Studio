@@ -438,9 +438,9 @@ async function exportPreviewVideo() {
     setTransientStatus('Video capture is not available in this browser');
     return;
   }
+
   const chunks = [];
   const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 8_000_000 });
-
   recorder.ondataavailable = (event) => {
     if (event.data && event.data.size > 0) chunks.push(event.data);
   };
@@ -450,7 +450,10 @@ async function exportPreviewVideo() {
   });
 
   recorder.start();
-  startPreviewPlayback({ fromStart: true, onComplete: () => recorder.stop() });
+  startPreviewPlayback({
+    fromStart: true,
+    onComplete: () => recorder.stop(),
+  });
   await stopped;
 
   const blob = new Blob(chunks, { type: mimeType });
@@ -514,31 +517,8 @@ function buildStageShell(scene, product) {
   return `
     <div class="three-stage" style="--stage-backdrop:${scene.appearance.backdrop}; --stage-panel:${scene.appearance.panel}; --stage-text:${scene.appearance.text}; --stage-accent:${scene.appearance.accent};">
       <div class="three-stage__canvas" data-three-mount></div>
-      <div class="stage-topline">
-        <span class="stage-topline__badge">Three.js Custom Model</span>
-        <span class="stage-topline__badge">${escapeHtml(product.sizeLabel)}</span>
-        <span class="stage-topline__badge">${escapeHtml(product.screen.resolution || 'Scene Pack')}</span>
-        <span class="stage-topline__badge">${escapeHtml(product.physical.thicknessMm ? `${product.physical.thicknessMm} mm` : 'Portable')}</span>
-      </div>
-      ${renderStageOverlay(scene, product)}
-      ${renderStageCallouts(scene, product)}
-      <div class="stage-bottom-note">Drag to orbit. Right drag to pan. Wheel to zoom. Press R to reset. Play Preview drives the 30-second storyboard. Export Video records the viewport as a browser-generated WebM.</div>
     </div>
   `;
-}
-
-function renderStageOverlay(scene) {
-  if (scene.id === 'hero-main') return '';
-  const sideClass = scene.id === 'gaming-144hz' || scene.id === 'gaming-compact' ? 'overlay-copy is-left' : 'overlay-copy';
-  return `<div class="${sideClass} is-stage"><span class="overlay-eyebrow">${escapeHtml(scene.category)}</span><h3>${escapeHtml(scene.headline)}</h3><p>${escapeHtml(scene.subheadline)}</p><div class="overlay-badges">${scene.badges.map((badge) => `<span>${escapeHtml(badge)}</span>`).join('')}</div></div>`;
-}
-
-function renderStageCallouts(scene, product) {
-  const callouts = scene.id === 'ports-connectivity' ? product.connectivity : scene.callouts;
-  const classes = ['callout-stack', 'is-stage'];
-  if (scene.id === 'ports-connectivity') classes.push('is-ports');
-  if (scene.id === 'vesa-speakers') classes.push('is-compact');
-  return `<div class="${classes.join(' ')}">${callouts.map((callout) => `<div class="callout-card">${escapeHtml(callout)}</div>`).join('')}</div>`;
 }
 
 function updateUrl(sceneId) {
@@ -623,6 +603,11 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+
+
+
+
+
 
 
 

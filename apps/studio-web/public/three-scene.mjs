@@ -23,6 +23,186 @@ function fillRoundedRect(ctx, x, y, width, height, radius, fillStyle) {
   ctx.fill();
 }
 
+
+function drawScreenHud(ctx, canvas, product, scene) {
+  const hud = buildSceneHudContent(scene, product);
+  const chips = hud.chips.slice(0, 4).map((item) => truncateLabel(item, 24));
+  const details = hud.details.slice(0, 5).map((item) => truncateLabel(item, 40));
+  const chipY = 28;
+  const chipHeight = 42;
+  let chipX = 28;
+
+  fillRoundedRect(ctx, 26, 22, 420, 84, 20, 'rgba(7, 14, 24, 0.42)');
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.font = '600 26px sans-serif';
+  ctx.fillText(hud.title, 46, 56);
+  ctx.fillStyle = 'rgba(255,255,255,0.76)';
+  ctx.font = '500 17px sans-serif';
+  ctx.fillText(truncateLabel(hud.subtitle, 54), 46, 84);
+
+  ctx.font = '600 18px sans-serif';
+  chips.forEach((spec) => {
+    const width = Math.max(112, Math.min(230, 34 + spec.length * 11));
+    fillRoundedRect(ctx, chipX, chipY + 92, width, chipHeight, 21, 'rgba(255,255,255,0.16)');
+    ctx.fillStyle = '#f4fbff';
+    ctx.fillText(spec, chipX + 18, chipY + 120);
+    chipX += width + 12;
+  });
+
+  const panelX = canvas.width - 360;
+  fillRoundedRect(ctx, panelX, 24, 332, 194, 22, 'rgba(7, 14, 24, 0.34)');
+  ctx.fillStyle = 'rgba(255,255,255,0.88)';
+  ctx.font = '700 18px sans-serif';
+  ctx.fillText(hud.panelTitle, panelX + 20, 54);
+  ctx.font = '500 17px sans-serif';
+  details.forEach((spec, index) => {
+    fillRoundedRect(ctx, panelX + 18, 70 + index * 28, 294, 22, 11, index % 2 === 0 ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.07)');
+    ctx.fillStyle = 'rgba(255,255,255,0.82)';
+    ctx.fillText(spec, panelX + 30, 86 + index * 28);
+  });
+
+  fillRoundedRect(ctx, 26, canvas.height - 76, 620, 46, 18, 'rgba(7, 14, 24, 0.34)');
+  ctx.fillStyle = 'rgba(255,255,255,0.84)';
+  ctx.font = '500 18px sans-serif';
+  ctx.fillText(truncateLabel(hud.footer, 70), 46, canvas.height - 46);
+}
+
+function buildSceneHudContent(scene, product) {
+  const refreshOrTouch = product.screen.touch ? 'Touch Enabled' : product.screen.refreshRate;
+  const sceneHighlights = [
+    ...(scene.callouts || []),
+    ...((scene.override && Array.isArray(scene.override.copyHighlights)) ? scene.override.copyHighlights : []),
+  ].filter(Boolean);
+
+  const base = {
+    footer: `${product.branding?.brandName || 'LuminaDisplay'} • ${buildSceneFooterLabel(scene)}`,
+    panelTitle: 'Scene Specs',
+    subtitle: scene.subheadline || `${product.sizeLabel} ${product.screen.panelType || 'Display'}`,
+    title: scene.headline || product.branding?.brandName || 'LuminaDisplay',
+  };
+
+  switch (scene.id) {
+    case 'hero-main':
+      return {
+        ...base,
+        chips: [product.sizeLabel, product.screen.resolution, refreshOrTouch, product.screen.panelType],
+        details: [
+          `${product.screen.aspectRatio} panel ratio`,
+          `${product.screen.brightnessNits} nits brightness`,
+          `${product.screen.colorGamut} color gamut`,
+          `${product.physical.thicknessMm} mm slim profile`,
+          `${product.physical.weightG} g portable body`,
+        ],
+        panelTitle: 'Hero Specs',
+        subtitle: `${product.branding?.brandName || 'LuminaDisplay'} hero configuration`,
+        title: `${product.branding?.brandName || 'LuminaDisplay'} ${product.sizeLabel}`,
+      };
+    case 'material-stand':
+    case 'compact-build':
+      return {
+        ...base,
+        chips: ['Metal Body', `${product.physical.thicknessMm} mm`, `${product.physical.weightG} g`, product.sizeLabel],
+        details: [
+          ...sceneHighlights,
+          `${product.physical.widthMm} x ${product.physical.heightMm} mm footprint`,
+          product.physical.bodyMaterial,
+        ],
+        panelTitle: 'Build Details',
+      };
+    case 'office-productivity':
+    case 'embedded-control':
+      return {
+        ...base,
+        chips: [product.screen.aspectRatio, product.screen.resolution, product.screen.touch ? 'Touch UI' : 'USB-C workflow', product.sizeLabel],
+        details: sceneHighlights.length ? sceneHighlights : [`${product.screen.resolution} workspace`, `${product.screen.aspectRatio} canvas`, 'Productivity-ready scene'],
+        panelTitle: scene.id === 'embedded-control' ? 'Embedded Fit' : 'Workflow Fit',
+      };
+    case 'gaming-144hz':
+      return {
+        ...base,
+        chips: [product.screen.refreshRate, `${product.screen.brightnessNits} nits`, product.screen.panelType, 'Console Ready'],
+        details: sceneHighlights,
+        panelTitle: 'Gaming Specs',
+      };
+    case 'gaming-compact':
+      return {
+        ...base,
+        chips: ['Mini HDMI', `${product.screen.brightnessNits} nits`, product.screen.panelType, 'Portable Play'],
+        details: sceneHighlights,
+        panelTitle: 'Compact Play',
+      };
+    case 'travel-portable':
+      return {
+        ...base,
+        chips: [`${product.physical.weightG} g`, `${product.physical.thicknessMm} mm`, product.sizeLabel, 'Travel Ready'],
+        details: sceneHighlights,
+        panelTitle: 'Travel Fit',
+      };
+    case 'touch-lamination':
+      return {
+        ...base,
+        chips: ['Touch Enabled', product.screen.resolution, product.screen.panelType, `${product.screen.brightnessNits} nits`],
+        details: sceneHighlights,
+        panelTitle: 'Touch Specs',
+        subtitle: product.screen.touchType || base.subtitle,
+      };
+    case 'ports-connectivity':
+      return {
+        ...base,
+        chips: ['Mini HDMI', 'USB-C', 'Power USB-C', 'Audio'],
+        details: product.connectivity,
+        panelTitle: 'Port Layout',
+        subtitle: 'Connection map and port-ready workflow',
+        title: 'Connectivity Matrix',
+      };
+    case 'vesa-speakers':
+      return {
+        ...base,
+        chips: ['75 x 75 VESA', 'Dual Speakers', product.sizeLabel, product.screen.panelType],
+        details: sceneHighlights,
+        panelTitle: 'Rear Features',
+      };
+    default:
+      return {
+        ...base,
+        chips: [product.sizeLabel, product.screen.resolution, refreshOrTouch, product.screen.panelType],
+        details: buildScreenSpecList(product),
+      };
+  }
+}
+
+function buildSceneFooterLabel(scene) {
+  const footerMap = {
+    'compact-build': 'Build Showcase',
+    'embedded-control': 'Control Panel Workflow',
+    'gaming-144hz': 'Gaming Performance',
+    'gaming-compact': 'Compact Entertainment',
+    'hero-main': 'Hero Composition',
+    'material-stand': 'Premium Build Showcase',
+    'office-productivity': 'Productivity Workflow',
+    'ports-connectivity': 'Port Breakdown',
+    'touch-lamination': 'Touch Interaction Demo',
+    'travel-portable': 'Travel Setup',
+    'vesa-speakers': 'Rear Mount Features',
+  };
+  return footerMap[scene.id] || scene.headline || 'Scene Preview';
+}
+
+function buildScreenSpecList(product) {
+  return [
+    `${product.screen.aspectRatio} panel ratio`,
+    `${product.screen.brightnessNits || ''} nits brightness`.trim(),
+    `${product.screen.colorGamut || ''} color gamut`.trim(),
+    `${product.physical.thicknessMm || ''} mm slim body`.trim(),
+    `${product.physical.weightG || ''} g total weight`.trim(),
+  ].filter(Boolean);
+}
+
+function truncateLabel(value, maxChars = 32) {
+  const text = String(value || '').trim();
+  if (text.length <= maxChars) return text;
+  return `${text.slice(0, maxChars - 1)}…`;
+}
 function drawScreenTexture(scene, product) {
   const canvas = createCanvas(1280, 800);
   const ctx = canvas.getContext('2d');
@@ -65,6 +245,8 @@ function drawScreenTexture(scene, product) {
       drawInfoCard(ctx, canvas, product.screen.resolution || product.sizeLabel);
       break;
   }
+
+  drawScreenHud(ctx, canvas, product, scene);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -239,6 +421,7 @@ function drawLabelTexture(label, width = 512, height = 128, options = {}) {
   ctx.textBaseline = 'middle';
   ctx.fillStyle = options.color || 'rgba(255,255,255,0.88)';
   ctx.fillText(label, width / 2, height / 2);
+
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
@@ -976,6 +1159,9 @@ export class PortableMonitorScene {
     this.renderer.dispose();
   }
 }
+
+
+
 
 
 
