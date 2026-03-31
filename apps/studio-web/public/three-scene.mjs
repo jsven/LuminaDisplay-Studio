@@ -24,7 +24,29 @@ function fillRoundedRect(ctx, x, y, width, height, radius, fillStyle) {
 }
 
 
-function drawScreenHud(ctx, canvas, product, scene) {
+function clamp01(value) {
+  return Math.min(Math.max(value, 0), 1);
+}
+
+function easeOutCubic(value) {
+  const t = clamp01(value);
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function regionRevealProgress(elapsed, delay, duration) {
+  return easeOutCubic((elapsed - delay) / duration);
+}
+
+function withReveal(ctx, progress, offsetY, draw) {
+  if (progress <= 0) return;
+  ctx.save();
+  ctx.globalAlpha = progress;
+  ctx.translate(0, (1 - progress) * offsetY);
+  draw();
+  ctx.restore();
+}
+
+function drawScreenHud(ctx, canvas, product, scene, elapsed = 99) {
   const hud = buildSceneHudContent(scene, product);
   const chips = hud.chips.slice(0, 4).map((item) => truncateLabel(item, 24));
   const details = hud.details.slice(0, 5).map((item) => truncateLabel(item, 40));
@@ -32,39 +54,57 @@ function drawScreenHud(ctx, canvas, product, scene) {
   const chipHeight = 42;
   let chipX = 28;
 
-  fillRoundedRect(ctx, 26, 22, 420, 84, 20, 'rgba(7, 14, 24, 0.42)');
-  ctx.fillStyle = 'rgba(255,255,255,0.95)';
-  ctx.font = '600 26px sans-serif';
-  ctx.fillText(hud.title, 46, 56);
-  ctx.fillStyle = 'rgba(255,255,255,0.76)';
-  ctx.font = '500 17px sans-serif';
-  ctx.fillText(truncateLabel(hud.subtitle, 54), 46, 84);
+  const headerProgress = regionRevealProgress(elapsed, 0.02, 0.45);
+  const chipsProgress = chips.map((_, index) => regionRevealProgress(elapsed, 0.28 + index * 0.12, 0.35));
+  const panelProgress = regionRevealProgress(elapsed, 0.76, 0.46);
+  const detailProgress = details.map((_, index) => regionRevealProgress(elapsed, 0.92 + index * 0.1, 0.28));
+  const footerProgress = regionRevealProgress(elapsed, 1.36, 0.38);
+
+  withReveal(ctx, headerProgress, 26, () => {
+    fillRoundedRect(ctx, 26, 22, 420, 84, 20, 'rgba(7, 14, 24, 0.42)');
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.font = '600 26px sans-serif';
+    ctx.fillText(hud.title, 46, 56);
+    ctx.fillStyle = 'rgba(255,255,255,0.76)';
+    ctx.font = '500 17px sans-serif';
+    ctx.fillText(truncateLabel(hud.subtitle, 54), 46, 84);
+  });
 
   ctx.font = '600 18px sans-serif';
-  chips.forEach((spec) => {
+  chips.forEach((spec, index) => {
+    const progress = chipsProgress[index];
     const width = Math.max(112, Math.min(230, 34 + spec.length * 11));
-    fillRoundedRect(ctx, chipX, chipY + 92, width, chipHeight, 21, 'rgba(255,255,255,0.16)');
-    ctx.fillStyle = '#f4fbff';
-    ctx.fillText(spec, chipX + 18, chipY + 120);
+    withReveal(ctx, progress, 20, () => {
+      fillRoundedRect(ctx, chipX, chipY + 92, width, chipHeight, 21, 'rgba(255,255,255,0.16)');
+      ctx.fillStyle = '#f4fbff';
+      ctx.fillText(spec, chipX + 18, chipY + 120);
+    });
     chipX += width + 12;
   });
 
   const panelX = canvas.width - 360;
-  fillRoundedRect(ctx, panelX, 24, 332, 194, 22, 'rgba(7, 14, 24, 0.34)');
-  ctx.fillStyle = 'rgba(255,255,255,0.88)';
-  ctx.font = '700 18px sans-serif';
-  ctx.fillText(hud.panelTitle, panelX + 20, 54);
-  ctx.font = '500 17px sans-serif';
-  details.forEach((spec, index) => {
-    fillRoundedRect(ctx, panelX + 18, 70 + index * 28, 294, 22, 11, index % 2 === 0 ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.07)');
-    ctx.fillStyle = 'rgba(255,255,255,0.82)';
-    ctx.fillText(spec, panelX + 30, 86 + index * 28);
+  withReveal(ctx, panelProgress, 28, () => {
+    fillRoundedRect(ctx, panelX, 24, 332, 194, 22, 'rgba(7, 14, 24, 0.34)');
+    ctx.fillStyle = 'rgba(255,255,255,0.88)';
+    ctx.font = '700 18px sans-serif';
+    ctx.fillText(hud.panelTitle, panelX + 20, 54);
   });
 
-  fillRoundedRect(ctx, 26, canvas.height - 76, 620, 46, 18, 'rgba(7, 14, 24, 0.34)');
-  ctx.fillStyle = 'rgba(255,255,255,0.84)';
-  ctx.font = '500 18px sans-serif';
-  ctx.fillText(truncateLabel(hud.footer, 70), 46, canvas.height - 46);
+  ctx.font = '500 17px sans-serif';
+  details.forEach((spec, index) => {
+    withReveal(ctx, detailProgress[index], 16, () => {
+      fillRoundedRect(ctx, panelX + 18, 70 + index * 28, 294, 22, 11, index % 2 === 0 ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.07)');
+      ctx.fillStyle = 'rgba(255,255,255,0.82)';
+      ctx.fillText(spec, panelX + 30, 86 + index * 28);
+    });
+  });
+
+  withReveal(ctx, footerProgress, 18, () => {
+    fillRoundedRect(ctx, 26, canvas.height - 76, 620, 46, 18, 'rgba(7, 14, 24, 0.34)');
+    ctx.fillStyle = 'rgba(255,255,255,0.84)';
+    ctx.font = '500 18px sans-serif';
+    ctx.fillText(truncateLabel(hud.footer, 70), 46, canvas.height - 46);
+  });
 }
 
 function buildSceneHudContent(scene, product) {
@@ -203,9 +243,8 @@ function truncateLabel(value, maxChars = 32) {
   if (text.length <= maxChars) return text;
   return `${text.slice(0, maxChars - 1)}…`;
 }
-function drawScreenTexture(scene, product) {
-  const canvas = createCanvas(1280, 800);
-  const ctx = canvas.getContext('2d');
+
+function drawScreenBase(ctx, canvas, scene, product) {
   const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
   gradient.addColorStop(0, '#09131f');
   gradient.addColorStop(0.45, scene.appearance.accent);
@@ -245,16 +284,25 @@ function drawScreenTexture(scene, product) {
       drawInfoCard(ctx, canvas, product.screen.resolution || product.sizeLabel);
       break;
   }
+}
 
-  drawScreenHud(ctx, canvas, product, scene);
+function redrawScreenTexture(state, scene, product, elapsed = 99) {
+  state.ctx.clearRect(0, 0, state.canvas.width, state.canvas.height);
+  drawScreenBase(state.ctx, state.canvas, scene, product);
+  drawScreenHud(state.ctx, state.canvas, product, scene, elapsed);
+  state.texture.needsUpdate = true;
+}
 
+function createScreenTextureState(scene, product) {
+  const canvas = createCanvas(1280, 800);
+  const ctx = canvas.getContext('2d');
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 4;
-  return texture;
-}
-
-function drawHeroGlow(ctx, canvas) {
+  const state = { canvas, ctx, texture };
+  redrawScreenTexture(state, scene, product, 99);
+  return state;
+}function drawHeroGlow(ctx, canvas) {
   const glow = ctx.createRadialGradient(canvas.width * 0.68, canvas.height * 0.42, 30, canvas.width * 0.68, canvas.height * 0.42, canvas.width * 0.44);
   glow.addColorStop(0, 'rgba(255,255,255,0.78)');
   glow.addColorStop(0.45, 'rgba(125, 211, 252, 0.42)');
@@ -656,9 +704,11 @@ export class PortableMonitorScene {
   render(product, scene) {
     this.currentProduct = product;
     this.currentScene = scene;
+    this.sceneStartTime = this.clock.getElapsedTime();
     this.monitorMaterials = [];
     this.scenePropObjects = [];
     this.screenMaterial = null;
+    this.screenTextureState = null;
     this.disposeSceneResources();
     this.monitorGroup.clear();
     this.propsGroup.clear();
@@ -753,10 +803,10 @@ export class PortableMonitorScene {
     this.monitorMaterials.push(body.material);
     this.monitorGroup.add(body);
 
-    const screenTexture = this.track(drawScreenTexture(scene, product));
+    this.screenTextureState = createScreenTextureState(scene, product);
     const screen = new THREE.Mesh(
       this.track(new THREE.PlaneGeometry(metrics.screenWidth, metrics.screenHeight)),
-      this.track(new THREE.MeshBasicMaterial({ map: screenTexture })),
+      this.track(new THREE.MeshBasicMaterial({ map: this.track(this.screenTextureState.texture) })),
     );
     screen.position.set(0, 0.16, metrics.depth / 2 + 0.002);
     this.screenMaterial = screen.material;
@@ -1113,6 +1163,10 @@ export class PortableMonitorScene {
       }
     }
 
+    if (this.screenTextureState && this.currentScene && this.currentProduct) {
+      redrawScreenTexture(this.screenTextureState, this.currentScene, this.currentProduct, elapsed - this.sceneStartTime);
+    }
+
     if (this.container) {
       this.resize();
       this.updateCameraPose();
@@ -1159,6 +1213,10 @@ export class PortableMonitorScene {
     this.renderer.dispose();
   }
 }
+
+
+
+
 
 
 
