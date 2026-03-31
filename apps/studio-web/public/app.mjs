@@ -18,8 +18,10 @@ const state = {
   preview: {
     currentTime: 0,
     duration: 30,
+    exporting: false,
     frameHandle: 0,
     lastFrameAt: 0,
+    onComplete: null,
     playing: false,
     segments: [],
   },
@@ -76,6 +78,7 @@ function cacheRefs() {
   refs.downloadPackLink = document.getElementById('downloadPackLink');
   refs.downloadSceneBtn = document.getElementById('downloadSceneBtn');
   refs.exportPngBtn = document.getElementById('exportPngBtn');
+  refs.exportVideoBtn = document.getElementById('exportVideoBtn');
   refs.focusChips = document.getElementById('focusChips');
   refs.fovInput = document.getElementById('fovInput');
   refs.fovValue = document.getElementById('fovValue');
@@ -118,20 +121,21 @@ function cacheRefs() {
 }
 
 function bindEvents() {
-  refs.prevSceneBtn.addEventListener('click', () => selectScene(state.sceneIndex - 1, { syncPreview: true }));
-  refs.nextSceneBtn.addEventListener('click', () => selectScene(state.sceneIndex + 1, { syncPreview: true }));
-  refs.toggleAutoplayBtn.addEventListener('click', togglePreviewPlayback);
-  refs.copyPromptBtn.addEventListener('click', copyPrompt);
-  refs.downloadSceneBtn.addEventListener('click', downloadCurrentScene);
-  refs.exportPngBtn.addEventListener('click', exportCurrentPng);
-  refs.resetViewBtn.addEventListener('click', resetCurrentView);
-  refs.previewProgressInput.addEventListener('input', () => {
+  refs.prevSceneBtn?.addEventListener('click', () => selectScene(state.sceneIndex - 1, { syncPreview: true }));
+  refs.nextSceneBtn?.addEventListener('click', () => selectScene(state.sceneIndex + 1, { syncPreview: true }));
+  refs.toggleAutoplayBtn?.addEventListener('click', togglePreviewPlayback);
+  refs.copyPromptBtn?.addEventListener('click', copyPrompt);
+  refs.downloadSceneBtn?.addEventListener('click', downloadCurrentScene);
+  refs.exportPngBtn?.addEventListener('click', exportCurrentPng);
+  refs.exportVideoBtn?.addEventListener('click', exportPreviewVideo);
+  refs.resetViewBtn?.addEventListener('click', resetCurrentView);
+  refs.previewProgressInput?.addEventListener('input', () => {
     const duration = Math.max(state.preview.duration, 1);
     const nextTime = Number(refs.previewProgressInput.value) / 1000 * duration;
     setPreviewTime(nextTime, { syncScene: true });
   });
 
-  refs.videoTimeline.addEventListener('click', (event) => {
+  refs.videoTimeline?.addEventListener('click', (event) => {
     const button = event.target.closest('[data-segment-index]');
     if (!button) return;
     const segmentIndex = Number(button.dataset.segmentIndex);
@@ -310,8 +314,11 @@ function updatePreviewUi() {
   const progress = Math.round((state.preview.currentTime / duration) * 1000);
   refs.previewProgressInput.value = String(progress);
   refs.previewTimeLabel.textContent = `${formatTimestamp(state.preview.currentTime)} / ${formatTimestamp(duration)}`;
-  refs.previewStatusLabel.textContent = state.preview.playing ? 'Playing' : 'Stopped';
+  refs.previewStatusLabel.textContent = state.preview.exporting ? 'Exporting' : state.preview.playing ? 'Playing' : 'Stopped';
   refs.toggleAutoplayBtn.textContent = state.preview.playing ? 'Pause Preview' : 'Play Preview';
+  refs.toggleAutoplayBtn.disabled = state.preview.exporting;
+  refs.exportVideoBtn.disabled = state.preview.exporting;
+  refs.exportVideoBtn.textContent = state.preview.exporting ? 'Exporting…' : 'Export Video';
   renderPreviewTimeline();
 }
 
@@ -344,7 +351,7 @@ function setPreviewTime(nextTime, options = {}) {
   }
   updatePreviewUi();
   if (options.stopAtEnd && clamped >= duration) {
-    stopPreviewPlayback();
+    stopPreviewPlayback(true);
   }
 }
 
@@ -362,27 +369,32 @@ function jumpToSegment(index) {
   setPreviewTime(segment.start, { stopAtEnd: false });
 }
 
-function startPreviewPlayback() {
+function startPreviewPlayback(options = {}) {
+  const { fromStart = false, onComplete = null } = options;
   if (state.reduceMotion) {
     refs.promptStatus.textContent = 'Reduced motion is enabled';
     return;
   }
   if (state.preview.playing) return;
-  if (state.preview.currentTime >= state.preview.duration) {
+  if (fromStart || state.preview.currentTime >= state.preview.duration) {
     state.preview.currentTime = 0;
   }
   state.preview.playing = true;
+  state.preview.onComplete = onComplete;
   state.preview.lastFrameAt = 0;
   updatePreviewUi();
   state.preview.frameHandle = requestAnimationFrame(stepPreviewPlayback);
 }
 
-function stopPreviewPlayback() {
+function stopPreviewPlayback(completed = false) {
   state.preview.playing = false;
   state.preview.lastFrameAt = 0;
   if (state.preview.frameHandle) cancelAnimationFrame(state.preview.frameHandle);
   state.preview.frameHandle = 0;
+  const onComplete = completed ? state.preview.onComplete : null;
+  state.preview.onComplete = null;
   updatePreviewUi();
+  if (onComplete) onComplete();
 }
 
 function stepPreviewPlayback(timestamp) {
@@ -397,11 +409,71 @@ function stepPreviewPlayback(timestamp) {
 }
 
 function togglePreviewPlayback() {
+  if (state.preview.exporting) return;
   if (state.preview.playing) {
     stopPreviewPlayback();
   } else {
     startPreviewPlayback();
   }
+}
+
+async function exportPreviewVideo() {
+  if (!state.renderer || !window.MediaRecorder || state.preview.exporting) return;
+
+  const mimeType = pickSupportedVideoMimeType();
+  if (!mimeType) {
+    setTransientStatus('Video export is not supported in this browser');
+    return;
+  }
+
+  stopPreviewPlayback();
+  state.preview.exporting = true;
+  updatePreviewUi();
+  setPreviewTime(0, { syncScene: true, stopAtEnd: false });
+
+  const stream = state.renderer.captureStream(30);
+  if (!stream) {
+    state.preview.exporting = false;
+    updatePreviewUi();
+    setTransientStatus('Video capture is not available in this browser');
+    return;
+  }
+  const chunks = [];
+  const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 8_000_000 });
+
+  recorder.ondataavailable = (event) => {
+    if (event.data && event.data.size > 0) chunks.push(event.data);
+  };
+
+  const stopped = new Promise((resolve) => {
+    recorder.onstop = resolve;
+  });
+
+  recorder.start();
+  startPreviewPlayback({ fromStart: true, onComplete: () => recorder.stop() });
+  await stopped;
+
+  const blob = new Blob(chunks, { type: mimeType });
+  const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `${state.packId}-preview.${ext}`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+
+  state.preview.exporting = false;
+  updatePreviewUi();
+  setTransientStatus('Video exported');
+}
+
+function pickSupportedVideoMimeType() {
+  const candidates = [
+    'video/webm;codecs=vp9',
+    'video/webm;codecs=vp8',
+    'video/webm',
+    'video/mp4',
+  ];
+  return candidates.find((type) => MediaRecorder.isTypeSupported(type)) || '';
 }
 
 function renderSceneTabs() {
@@ -450,7 +522,7 @@ function buildStageShell(scene, product) {
       </div>
       ${renderStageOverlay(scene, product)}
       ${renderStageCallouts(scene, product)}
-      <div class="stage-bottom-note">Left drag to orbit. Right drag to pan. Wheel to zoom. Press R to reset. Use Play Preview for the 30-second sequence and Export PNG for snapshot output.</div>
+      <div class="stage-bottom-note">Drag to orbit. Right drag to pan. Wheel to zoom. Press R to reset. Play Preview drives the 30-second storyboard. Export Video records the viewport as a browser-generated WebM.</div>
     </div>
   `;
 }
@@ -551,4 +623,6 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+
+
 

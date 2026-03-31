@@ -423,7 +423,7 @@ export class PortableMonitorScene {
       const forward = TEMP_TARGET.copy(this.camera.position).sub(this.cameraTarget).normalize();
       const right = TEMP_VECTOR.crossVectors(this.camera.up, forward).normalize();
       const up = TEMP_VECTOR.clone().crossVectors(forward, right).normalize();
-      this.cameraTarget.addScaledVector(right, deltaX * panScale);
+      this.cameraTarget.addScaledVector(right, -deltaX * panScale);
       this.cameraTarget.addScaledVector(up, deltaY * panScale);
       return;
     }
@@ -456,6 +456,13 @@ export class PortableMonitorScene {
     link.href = this.renderer.domElement.toDataURL('image/png');
     link.download = filename;
     link.click();
+  }
+
+  captureStream(fps = 30) {
+    if (typeof this.renderer?.domElement?.captureStream !== 'function') {
+      return null;
+    }
+    return this.renderer.domElement.captureStream(fps);
   }
 
   setSettings(partial = {}) {
@@ -623,7 +630,7 @@ export class PortableMonitorScene {
 
     this.buildPorts(metrics, scene);
     this.buildStand(metrics, product);
-    this.applySceneOrientation(scene, product);
+    this.applySceneOrientation(scene, product, metrics);
   }
 
   buildPorts(metrics, scene) {
@@ -688,14 +695,21 @@ export class PortableMonitorScene {
     }
   }
 
-  applySceneOrientation(scene, product) {
+  applySceneOrientation(scene, product, metrics) {
     const rotationY = THREE.MathUtils.degToRad(scene.camera?.rotateY || -22);
     const rotationX = THREE.MathUtils.degToRad(scene.camera?.rotateX || 10);
     const rotationZ = THREE.MathUtils.degToRad(scene.camera?.rotateZ || 0);
     const scale = scene.camera?.scale || 1;
+    const hasDeskSurface = ['office-productivity', 'travel-portable', 'gaming-144hz', 'embedded-control'].includes(scene.id);
+    const supportSurfaceY = hasDeskSurface ? (-1.08 + 0.09) : -1.18;
+    const footRadius = metrics.depth * 0.24;
+    const currentFootCenterY = -metrics.height * 0.76;
+    const groundingOffsetY = supportSurfaceY + footRadius - currentFootCenterY;
+    const baseOffsetY = (product.sizeInch <= 7 ? -0.06 : 0) + groundingOffsetY;
+
     this.monitorGroup.rotation.set(rotationX, rotationY, rotationZ);
     this.monitorGroup.scale.setScalar(scale * (product.sizeInch <= 7 ? 1.02 : 1));
-    this.monitorGroup.position.set(0, product.sizeInch <= 7 ? -0.06 : 0, 0);
+    this.monitorGroup.position.set(0, baseOffsetY, 0);
 
     if (scene.id === 'vesa-speakers') {
       this.monitorGroup.rotation.y = Math.PI + THREE.MathUtils.degToRad(-28);
@@ -711,6 +725,7 @@ export class PortableMonitorScene {
       this.monitorGroup.rotation.y = THREE.MathUtils.degToRad(-10);
     }
 
+    this.monitorBaseOffsetY = baseOffsetY;
     this.monitorSpinBase = this.monitorGroup.rotation.y;
     this.monitorFloatAmount = product.sizeInch <= 7 ? 0.028 : 0.04;
   }
@@ -907,7 +922,7 @@ export class PortableMonitorScene {
     const elapsed = this.clock.getElapsedTime();
 
     if (this.monitorGroup) {
-      this.monitorGroup.position.y = (this.currentProduct?.sizeInch <= 7 ? -0.06 : 0) + Math.sin(elapsed * 0.9) * this.monitorFloatAmount;
+      this.monitorGroup.position.y = (this.monitorBaseOffsetY || 0) + Math.sin(elapsed * 0.9) * this.monitorFloatAmount;
       if (this.settings.autoRotate && this.currentScene?.id !== 'ports-connectivity') {
         this.monitorGroup.rotation.y = this.monitorSpinBase + Math.sin(elapsed * 0.42) * 0.045;
       } else {
@@ -961,6 +976,11 @@ export class PortableMonitorScene {
     this.renderer.dispose();
   }
 }
+
+
+
+
+
 
 
 
