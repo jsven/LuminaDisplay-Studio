@@ -2,6 +2,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { buildMetrics, createLabelTexture, createScreenTextureState, redrawScreenTexture } from './screenTextures.js';
+import { getSceneLayout } from './scene-layout.config.js';
 
 const TEMP_VECTOR = new THREE.Vector3();
 const TEMP_TARGET = new THREE.Vector3();
@@ -27,141 +28,38 @@ function createOrbitState() {
   };
 }
 
-function getDefaultCompanionDevice(scene) {
-  switch (scene.id) {
-    case 'touch-lamination':
-    case 'travel-portable':
-      return 'phone';
-    case 'gaming-144hz':
-    case 'gaming-compact':
-    case 'ports-connectivity':
-    case 'vesa-speakers':
-      return 'desktop';
-    default:
-      return 'laptop';
-  }
+function toRadians(rotationDeg = [0, 0, 0]) {
+  return rotationDeg.map((value) => THREE.MathUtils.degToRad(value));
 }
 
-function normalizeCompanionDevice(value) {
-  const raw = String(value || '').toLowerCase();
-  if (raw.includes('phone') || raw.includes('mobile')) return 'phone';
-  if (raw.includes('desktop') || raw.includes('pc') || raw.includes('console') || raw.includes('tower')) return 'desktop';
-  if (raw.includes('laptop') || raw.includes('notebook')) return 'laptop';
-  return '';
-}
-
-function resolveCompanionDevice(scene, selectedDevice) {
+function resolveCompanionDevice(layout, selectedDevice) {
   if (selectedDevice && selectedDevice !== 'auto') return selectedDevice;
-  const fromOverride = normalizeCompanionDevice(scene.override?.pairedDevice);
-  if (fromOverride) return fromOverride;
-  return getDefaultCompanionDevice(scene);
+  return layout.companion.device || 'laptop';
 }
 
-function getMonitorPose(scene, product, metrics) {
-  const deskTopY = -0.99;
+function getMonitorPose(layout, product, metrics) {
+  const deskTopY = layout.monitor.surfaceY;
   const footRadius = metrics.depth * 0.24;
   const currentFootCenterY = -metrics.height * 0.76;
   const groundingOffsetY = deskTopY + footRadius - currentFootCenterY;
-
-  let rotationX = THREE.MathUtils.degToRad(4);
-  let rotationY = THREE.MathUtils.degToRad(-18);
-  let rotationZ = 0;
-  let positionX = 0.34;
-  let positionZ = 0.16;
-  let scale = product.sizeInch <= 7 ? 1.02 : 1;
-
-  if (scene.id === 'hero-main') {
-    rotationY = THREE.MathUtils.degToRad(-12);
-    positionX = 0.2;
-  }
-
-  if (scene.id === 'material-stand' || scene.id === 'compact-build') {
-    rotationY = THREE.MathUtils.degToRad(-26);
-    positionX = 0.5;
-  }
-
-  if (scene.id === 'gaming-144hz' || scene.id === 'gaming-compact') {
-    rotationY = THREE.MathUtils.degToRad(-20);
-    positionX = 0.28;
-    positionZ = 0.1;
-  }
-
-  if (scene.id === 'touch-lamination') {
-    rotationY = THREE.MathUtils.degToRad(-8);
-    positionX = 0.42;
-  }
-
-  if (scene.id === 'ports-connectivity') {
-    rotationX = THREE.MathUtils.degToRad(6);
-    rotationY = -Math.PI / 2.25;
-    positionX = 0.82;
-    positionZ = 0.08;
-  }
-
-  if (scene.id === 'vesa-speakers') {
-    rotationX = THREE.MathUtils.degToRad(3);
-    rotationY = Math.PI + THREE.MathUtils.degToRad(-22);
-    positionX = 0.24;
-  }
+  const [rotationX, rotationY, rotationZ] = toRadians(layout.monitor.rotationDeg);
+  const [positionX, , positionZ] = layout.monitor.position;
 
   return {
     baseOffsetY: groundingOffsetY,
-    floatAmount: product.sizeInch <= 7 ? 0.004 : 0.006,
+    floatAmount: layout.monitor.floatAmount,
     positionX,
     positionZ,
     rotationX,
     rotationY,
     rotationZ,
-    scale,
+    scale: (layout.monitor.scale || 1) * (product.sizeInch <= 7 ? 1.02 : 1),
   };
 }
 
-function positionCamera(camera, orbit, cameraTarget, scene) {
-  let position = new THREE.Vector3(2.35, 0.18, 3.05);
-  let target = new THREE.Vector3(0.18, -0.05, 0.16);
-
-  if (scene.id === 'hero-main') {
-    position = new THREE.Vector3(2.1, 0.28, 2.95);
-    target = new THREE.Vector3(0.16, -0.05, 0.14);
-  }
-
-  if (scene.id === 'material-stand' || scene.id === 'compact-build') {
-    position = new THREE.Vector3(2.48, 0.22, 2.68);
-    target = new THREE.Vector3(0.5, -0.08, 0.1);
-  }
-
-  if (scene.id === 'office-productivity' || scene.id === 'embedded-control') {
-    position = new THREE.Vector3(2.28, 0.24, 2.92);
-    target = new THREE.Vector3(0.22, -0.08, 0.12);
-  }
-
-  if (scene.id === 'gaming-144hz' || scene.id === 'gaming-compact') {
-    position = new THREE.Vector3(2.42, 0.08, 2.78);
-    target = new THREE.Vector3(0.2, -0.16, 0.05);
-  }
-
-  if (scene.id === 'travel-portable') {
-    position = new THREE.Vector3(2.56, 0.24, 3.1);
-    target = new THREE.Vector3(0.1, -0.06, 0.18);
-  }
-
-  if (scene.id === 'touch-lamination') {
-    position = new THREE.Vector3(1.72, 0.2, 2.18);
-    target = new THREE.Vector3(0.44, 0.02, 0.18);
-  }
-
-  if (scene.id === 'ports-connectivity') {
-    position = new THREE.Vector3(1.7, -0.08, 1.92);
-    target = new THREE.Vector3(0.88, -0.02, 0.08);
-  }
-
-  if (scene.id === 'vesa-speakers') {
-    position = new THREE.Vector3(1.96, 0.16, 2.44);
-    target = new THREE.Vector3(0.18, -0.06, 0.08);
-  }
-
-  camera.position.copy(position);
-  cameraTarget.copy(target);
+function positionCamera(camera, orbit, cameraTarget, layout) {
+  camera.position.set(...layout.camera.position);
+  cameraTarget.set(...layout.camera.target);
 
   TEMP_SPHERICAL.setFromVector3(camera.position.clone().sub(cameraTarget));
   orbit.theta = TEMP_SPHERICAL.theta;
@@ -170,8 +68,8 @@ function positionCamera(camera, orbit, cameraTarget, scene) {
   orbit.currentTheta = TEMP_SPHERICAL.theta;
   orbit.currentPhi = TEMP_SPHERICAL.phi;
   orbit.currentRadius = TEMP_SPHERICAL.radius;
-  orbit.minRadius = 1.5;
-  orbit.maxRadius = 6.5;
+  orbit.minRadius = layout.camera.orbitMinRadius ?? 1.5;
+  orbit.maxRadius = layout.camera.orbitMaxRadius ?? 6.5;
   orbit.defaultTheta = orbit.theta;
   orbit.defaultPhi = orbit.phi;
   orbit.defaultRadius = orbit.radius;
@@ -232,9 +130,12 @@ function DeskMouse({ position, scale = 1 }) {
   );
 }
 
-function LaptopDevice() {
+function LaptopDevice({ layout }) {
+  const config = layout.companion.laptop;
+  const rotation = toRadians(config.rotationDeg);
+
   return (
-    <group position={[-1.24, -0.69, 0.88]} rotation={[0, THREE.MathUtils.degToRad(22), 0]} scale={0.96}>
+    <group position={config.position} rotation={rotation} scale={config.scale}>
       <mesh castShadow receiveShadow>
         <boxGeometry args={[1.36, 0.08, 0.96]} />
         <meshStandardMaterial color="#ced3da" metalness={0.24} roughness={0.58} />
@@ -247,14 +148,22 @@ function LaptopDevice() {
         <planeGeometry args={[1.14, 0.68]} />
         <meshBasicMaterial color="#8fc4ff" opacity={0.76} toneMapped={false} transparent />
       </mesh>
-      <CableCurve from={[-0.44, 0.06, -0.12]} to={[1.18, 0.2, -0.52]} />
+      <CableCurve
+        from={config.cable.from}
+        midOffsetA={config.cable.midOffsetA}
+        midOffsetB={config.cable.midOffsetB}
+        to={config.cable.to}
+      />
     </group>
   );
 }
 
-function PhoneDevice() {
+function PhoneDevice({ layout }) {
+  const config = layout.companion.phone;
+  const rotation = toRadians(config.rotationDeg);
+
   return (
-    <group position={[-1.02, -0.73, 0.72]} rotation={[0, THREE.MathUtils.degToRad(8), 0]}>
+    <group position={config.position} rotation={rotation}>
       <mesh castShadow receiveShadow position={[0, 0.1, 0]}>
         <boxGeometry args={[0.22, 0.2, 0.12]} />
         <meshStandardMaterial color="#f1dbc1" metalness={0.02} roughness={0.86} />
@@ -267,15 +176,26 @@ function PhoneDevice() {
         <planeGeometry args={[0.28, 0.54]} />
         <meshBasicMaterial color="#8ef0d1" opacity={0.9} toneMapped={false} transparent />
       </mesh>
-      <CableCurve from={[0.04, -0.04, 0.02]} to={[1.12, 0.16, -0.42]} midOffsetA={[0.12, 0.04, -0.02]} midOffsetB={[-0.08, 0.08, 0.1]} />
+      <CableCurve
+        from={config.cable.from}
+        midOffsetA={config.cable.midOffsetA}
+        midOffsetB={config.cable.midOffsetB}
+        to={config.cable.to}
+      />
     </group>
   );
 }
 
-function DesktopDevice() {
+function DesktopDevice({ layout }) {
+  const tower = layout.companion.desktop.tower;
+  const keyboard = layout.companion.desktop.keyboard;
+  const mouse = layout.companion.desktop.mouse;
+  const cable = layout.companion.desktop.cable;
+  const rotation = toRadians(tower.rotationDeg);
+
   return (
     <>
-      <group position={[1.92, -0.72, 0.82]} rotation={[0, THREE.MathUtils.degToRad(-12), 0]} scale={1.04}>
+      <group position={tower.position} rotation={rotation} scale={tower.scale}>
         <mesh castShadow receiveShadow>
           <boxGeometry args={[0.72, 1.16, 0.56]} />
           <meshStandardMaterial color="#232b32" metalness={0.28} roughness={0.48} />
@@ -289,24 +209,153 @@ function DesktopDevice() {
           <meshBasicMaterial color="#f6a96b" opacity={0.26} toneMapped={false} transparent />
         </mesh>
       </group>
-      <DeskKeyboard position={[0.92, -0.98, 1.02]} scale={0.92} />
-      <DeskMouse position={[1.64, -0.96, 1.04]} scale={0.92} />
-      <CableCurve from={[1.6, -0.4, 0.58]} to={[0.88, 0.14, -0.4]} color="#d8dfe4" midOffsetA={[-0.18, 0.22, -0.1]} midOffsetB={[-0.16, 0.08, 0.08]} />
+      <DeskKeyboard position={keyboard.position} scale={keyboard.scale} />
+      <DeskMouse position={mouse.position} scale={mouse.scale} />
+      <CableCurve
+        color={cable.color}
+        from={cable.from}
+        midOffsetA={cable.midOffsetA}
+        midOffsetB={cable.midOffsetB}
+        to={cable.to}
+      />
     </>
   );
 }
 
-function RoomDecor({ scene }) {
-  const accent = scene.appearance.accent || '#7dd3fc';
+function CoffeeMug({ position }) {
+  return (
+    <group position={position}>
+      <mesh castShadow receiveShadow position={[0, 0.08, 0]}>
+        <cylinderGeometry args={[0.08, 0.08, 0.16, 18]} />
+        <meshStandardMaterial color="#ece9e1" roughness={0.92} />
+      </mesh>
+      <mesh castShadow position={[0.08, 0.08, 0]} rotation={[0, 0, Math.PI / 2]}>
+        <torusGeometry args={[0.04, 0.008, 10, 22]} />
+        <meshStandardMaterial color="#d8b287" roughness={0.74} />
+      </mesh>
+    </group>
+  );
+}
+
+function DeskNotebook({ position, rotationDeg }) {
+  return (
+    <mesh castShadow receiveShadow position={position} rotation={toRadians(rotationDeg)}>
+      <boxGeometry args={[0.46, 0.03, 0.32]} />
+      <meshStandardMaterial color="#d6c2a2" roughness={0.92} />
+    </mesh>
+  );
+}
+
+function DockHub({ position }) {
+  return (
+    <group position={position}>
+      <mesh castShadow receiveShadow>
+        <boxGeometry args={[0.34, 0.04, 0.16]} />
+        <meshStandardMaterial color="#444a53" metalness={0.18} roughness={0.64} />
+      </mesh>
+      {[-0.1, 0, 0.1].map((offset) => (
+        <mesh key={offset} position={[offset, 0.01, 0.081]}>
+          <boxGeometry args={[0.04, 0.02, 0.01]} />
+          <meshStandardMaterial color="#111827" roughness={0.5} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function DeskSpeakerPair({ positions }) {
+  return (
+    <>
+      {positions.map((position) => (
+        <group key={position.join('-')} position={position}>
+          <mesh castShadow receiveShadow>
+            <boxGeometry args={[0.24, 0.42, 0.22]} />
+            <meshStandardMaterial color="#2a2f36" metalness={0.18} roughness={0.62} />
+          </mesh>
+          <mesh position={[0, 0.08, 0.12]}>
+            <cylinderGeometry args={[0.06, 0.06, 0.02, 18]} />
+            <meshStandardMaterial color="#15181e" roughness={0.46} />
+          </mesh>
+          <mesh position={[0, -0.08, 0.12]}>
+            <cylinderGeometry args={[0.035, 0.035, 0.02, 18]} />
+            <meshStandardMaterial color="#15181e" roughness={0.46} />
+          </mesh>
+        </group>
+      ))}
+    </>
+  );
+}
+
+function DeskLamp({ position }) {
+  return (
+    <group position={position}>
+      <mesh castShadow receiveShadow position={[0, 0.16, 0]}>
+        <cylinderGeometry args={[0.09, 0.12, 0.32, 20]} />
+        <meshStandardMaterial color="#d8d8d1" roughness={0.66} />
+      </mesh>
+      <mesh castShadow position={[0.06, 0.58, -0.04]} rotation={[0, 0, THREE.MathUtils.degToRad(-18)]}>
+        <cylinderGeometry args={[0.016, 0.026, 0.62, 18]} />
+        <meshStandardMaterial color="#4b4844" roughness={0.5} />
+      </mesh>
+      <mesh castShadow position={[0.18, 0.8, -0.12]}>
+        <coneGeometry args={[0.18, 0.22, 20]} />
+        <meshStandardMaterial color="#efe1cd" roughness={0.9} />
+      </mesh>
+    </group>
+  );
+}
+
+function DeskPlant({ position }) {
+  return (
+    <group position={position}>
+      <mesh castShadow receiveShadow position={[0, 0.12, 0]}>
+        <cylinderGeometry args={[0.09, 0.12, 0.24, 18]} />
+        <meshStandardMaterial color="#8b6546" roughness={0.9} />
+      </mesh>
+      <mesh castShadow position={[0, 0.34, 0]}>
+        <sphereGeometry args={[0.16, 18, 18]} />
+        <meshStandardMaterial color="#6e915f" roughness={0.88} />
+      </mesh>
+      <mesh castShadow position={[-0.1, 0.34, 0.06]}>
+        <sphereGeometry args={[0.08, 16, 16]} />
+        <meshStandardMaterial color="#769b64" roughness={0.88} />
+      </mesh>
+      <mesh castShadow position={[0.1, 0.3, -0.04]}>
+        <sphereGeometry args={[0.09, 16, 16]} />
+        <meshStandardMaterial color="#5d7f55" roughness={0.88} />
+      </mesh>
+    </group>
+  );
+}
+
+function DeskAccessories({ layout }) {
+  const { accessories } = layout;
+  const { items } = accessories;
 
   return (
     <>
-      <mesh position={[-1.34, -1.13, 0.52]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
+      {items.includes('mug') ? <CoffeeMug position={accessories.mug.position} /> : null}
+      {items.includes('notebook') ? <DeskNotebook position={accessories.notebook.position} rotationDeg={accessories.notebook.rotationDeg} /> : null}
+      {items.includes('hub') ? <DockHub position={accessories.hub.position} /> : null}
+      {items.includes('speakers') ? <DeskSpeakerPair positions={accessories.speakers.positions} /> : null}
+      {items.includes('lamp') ? <DeskLamp position={accessories.lamp.position} /> : null}
+      {items.includes('plant') ? <DeskPlant position={accessories.plant.position} /> : null}
+    </>
+  );
+}
+
+function RoomDecor({ layout, scene }) {
+  const accent = scene.appearance.accent || '#7dd3fc';
+  const { room } = layout;
+
+  return (
+    <>
+      <mesh position={room.rug.position} receiveShadow rotation={toRadians(room.rug.rotationDeg)}>
         <planeGeometry args={[2.9, 1.86]} />
         <meshStandardMaterial color="#d6bf9d" roughness={0.96} />
       </mesh>
 
-      <group position={[1.74, 0.06, -1.62]}>
+      <group position={room.shelf.position}>
         <mesh castShadow receiveShadow position={[0, 0.9, 0]}>
           <boxGeometry args={[1.34, 0.08, 0.3]} />
           <meshStandardMaterial color="#8d6543" roughness={0.84} />
@@ -350,36 +399,14 @@ function RoomDecor({ scene }) {
         </mesh>
       </group>
 
-      <group position={[0.98, -0.82, 1.34]}>
-        <mesh castShadow receiveShadow position={[0, 0.32, 0]}>
-          <cylinderGeometry args={[0.12, 0.16, 0.64, 20]} />
-          <meshStandardMaterial color="#d8d8d1" roughness={0.66} />
-        </mesh>
-        <mesh castShadow position={[0.08, 0.84, -0.06]} rotation={[0, 0, THREE.MathUtils.degToRad(-18)]}>
-          <cylinderGeometry args={[0.02, 0.03, 0.92, 18]} />
-          <meshStandardMaterial color="#4b4844" roughness={0.5} />
-        </mesh>
-        <mesh castShadow position={[0.24, 1.16, -0.12]}>
-          <coneGeometry args={[0.22, 0.28, 20]} />
-          <meshStandardMaterial color="#efe1cd" roughness={0.9} />
-        </mesh>
-      </group>
-
-      <mesh castShadow receiveShadow position={[-0.84, -0.9, 1.12]}>
-        <cylinderGeometry args={[0.08, 0.08, 0.22, 18]} />
-        <meshStandardMaterial color="#e8e5de" roughness={0.92} />
-      </mesh>
-      <mesh position={[-0.84, -0.77, 1.12]}>
-        <torusGeometry args={[0.08, 0.01, 12, 30]} />
-        <meshStandardMaterial color="#dbb17f" roughness={0.74} />
-      </mesh>
     </>
   );
 }
 
-function CozyRoomEnvironment({ lightBoost, scene }) {
+function CozyRoomEnvironment({ layout, lightBoost, scene }) {
   const accent = useMemo(() => new THREE.Color(scene.appearance.accent || '#7dd3fc'), [scene.appearance.accent]);
   const warmSun = useMemo(() => accent.clone().lerp(new THREE.Color('#ffd2a3'), 0.72), [accent]);
+  const { room } = layout;
 
   return (
     <>
@@ -419,62 +446,57 @@ function CozyRoomEnvironment({ lightBoost, scene }) {
         <meshStandardMaterial color="#ccb59b" roughness={0.98} />
       </mesh>
 
-      <mesh position={[0.34, 1.08, -2.06]}>
+      <mesh position={room.window.glowPlane}>
         <planeGeometry args={[2.2, 1.32]} />
         <meshBasicMaterial color="#fff0cf" opacity={0.84} transparent />
       </mesh>
-      <mesh position={[0.34, 1.08, -2.04]}>
+      <mesh position={room.window.panelPlane}>
         <planeGeometry args={[2.42, 1.54]} />
         <meshBasicMaterial color="#8e654b" />
       </mesh>
-      <mesh position={[0.34, 1.08, -2.03]}>
+      <mesh position={room.window.frameCenter}>
         <boxGeometry args={[0.06, 1.54, 0.04]} />
         <meshStandardMaterial color="#8e654b" roughness={0.82} />
       </mesh>
-      <mesh position={[0.34, 1.08, -2.03]}>
+      <mesh position={room.window.frameCenter}>
         <boxGeometry args={[2.42, 0.06, 0.04]} />
         <meshStandardMaterial color="#8e654b" roughness={0.82} />
       </mesh>
 
-      <mesh position={[-0.62, 0.18, -1.92]} rotation={[0, 0, THREE.MathUtils.degToRad(14)]}>
+      <mesh position={room.curtains.left.position} rotation={toRadians(room.curtains.left.rotationDeg)}>
         <planeGeometry args={[1.22, 2.8]} />
         <meshStandardMaterial color="#c58761" opacity={0.84} roughness={0.96} transparent />
       </mesh>
-      <mesh position={[1.26, 0.22, -1.92]} rotation={[0, 0, THREE.MathUtils.degToRad(-10)]}>
+      <mesh position={room.curtains.right.position} rotation={toRadians(room.curtains.right.rotationDeg)}>
         <planeGeometry args={[1.16, 2.72]} />
         <meshStandardMaterial color="#e2c29f" opacity={0.84} roughness={0.96} transparent />
       </mesh>
 
-      <mesh position={[0.18, -1.08, 0.74]} receiveShadow>
+      <mesh position={room.desk.top.position} receiveShadow>
         <boxGeometry args={[4.6, 0.14, 1.84]} />
         <meshStandardMaterial color="#7b5439" roughness={0.86} />
       </mesh>
-      {[
-        [-1.84, -1.52, 0.02],
-        [2.06, -1.52, 0.02],
-        [-1.84, -1.52, 1.46],
-        [2.06, -1.52, 1.46],
-      ].map((leg) => (
+      {room.desk.legs.map((leg) => (
         <mesh castShadow key={leg.join('-')} position={leg}>
           <boxGeometry args={[0.14, 0.88, 0.14]} />
           <meshStandardMaterial color="#6d4932" roughness={0.84} />
         </mesh>
       ))}
 
-      <mesh position={[0.44, -0.99, 0.66]} receiveShadow>
+      <mesh position={room.desk.mat.position} receiveShadow>
         <boxGeometry args={[1.44, 0.02, 0.76]} />
         <meshStandardMaterial color="#3b3430" opacity={0.92} roughness={0.82} transparent />
       </mesh>
 
-      <mesh position={[-0.96, -1.21, 1.56]} receiveShadow rotation={[THREE.MathUtils.degToRad(-90), 0, 0]}>
+      <mesh position={room.chair.stoolBase.position} receiveShadow rotation={toRadians(room.chair.stoolBase.rotationDeg)}>
         <cylinderGeometry args={[0.72, 0.72, 0.14, 28]} />
         <meshStandardMaterial color="#4f3c31" roughness={0.92} />
       </mesh>
-      <mesh position={[-0.96, -0.92, 1.42]} receiveShadow rotation={[0, THREE.MathUtils.degToRad(-12), 0]}>
+      <mesh position={room.chair.seat.position} receiveShadow rotation={toRadians(room.chair.seat.rotationDeg)}>
         <boxGeometry args={[0.94, 0.12, 0.84]} />
         <meshStandardMaterial color="#8c6346" roughness={0.9} />
       </mesh>
-      <mesh position={[-0.96, -0.64, 1.34]} receiveShadow rotation={[0, THREE.MathUtils.degToRad(-12), 0]}>
+      <mesh position={room.chair.backrest.position} receiveShadow rotation={toRadians(room.chair.backrest.rotationDeg)}>
         <boxGeometry args={[0.86, 0.56, 0.12]} />
         <meshStandardMaterial color="#8c6346" roughness={0.9} />
       </mesh>
@@ -482,24 +504,25 @@ function CozyRoomEnvironment({ lightBoost, scene }) {
   );
 }
 
-function CompanionSetup({ scene, selectedDevice }) {
-  const device = resolveCompanionDevice(scene, selectedDevice);
+function CompanionSetup({ layout, scene, selectedDevice }) {
+  const device = resolveCompanionDevice(layout, selectedDevice);
 
   return (
     <>
-      <RoomDecor scene={scene} />
-      {device === 'laptop' ? <LaptopDevice /> : null}
-      {device === 'phone' ? <PhoneDevice /> : null}
-      {device === 'desktop' ? <DesktopDevice /> : null}
+      <RoomDecor layout={layout} scene={scene} />
+      {device === 'laptop' ? <LaptopDevice layout={layout} /> : null}
+      {device === 'phone' ? <PhoneDevice layout={layout} /> : null}
+      {device === 'desktop' ? <DesktopDevice layout={layout} /> : null}
+      <DeskAccessories layout={layout} />
     </>
   );
 }
 
-function MonitorRig({ product, scene, settings }) {
+function MonitorRig({ layout, product, scene, settings }) {
   const groupRef = useRef(null);
   const screenMaterialRef = useRef(null);
   const metrics = useMemo(() => buildMetrics(product), [product]);
-  const pose = useMemo(() => getMonitorPose(scene, product, metrics), [scene, product, metrics]);
+  const pose = useMemo(() => getMonitorPose(layout, product, metrics), [layout, product, metrics]);
   const screenState = useMemo(() => createScreenTextureState(scene, product), [scene, product]);
   const logoTexture = useMemo(
     () => createLabelTexture(product.branding?.brandName || 'LuminaDisplay', 640, 140, { fontSize: product.sizeInch <= 7 ? 40 : 54 }),
@@ -651,11 +674,12 @@ function StageScene({ companionDevice, controllerRef, product, scene, settings }
   const { camera, gl, scene: threeScene } = useThree();
   const orbitRef = useRef(createOrbitState());
   const cameraTargetRef = useRef(new THREE.Vector3(0.18, -0.05, 0.16));
+  const layout = useMemo(() => getSceneLayout(scene.id), [scene.id]);
 
   useEffect(() => {
-    positionCamera(camera, orbitRef.current, cameraTargetRef.current, scene);
+    positionCamera(camera, orbitRef.current, cameraTargetRef.current, layout);
     updateCameraPose(camera, orbitRef.current, cameraTargetRef.current, true);
-  }, [camera, scene]);
+  }, [camera, layout]);
 
   useEffect(() => {
     camera.fov = settings.fov;
@@ -746,10 +770,10 @@ function StageScene({ companionDevice, controllerRef, product, scene, settings }
 
   return (
     <>
-      <CozyRoomEnvironment lightBoost={settings.lightBoost} scene={scene} />
-      <MonitorRig product={product} scene={scene} settings={settings} />
+      <CozyRoomEnvironment layout={layout} lightBoost={settings.lightBoost} scene={scene} />
+      <MonitorRig layout={layout} product={product} scene={scene} settings={settings} />
       <group visible={settings.propsVisible}>
-        <CompanionSetup scene={scene} selectedDevice={companionDevice} />
+        <CompanionSetup layout={layout} scene={scene} selectedDevice={companionDevice} />
       </group>
     </>
   );

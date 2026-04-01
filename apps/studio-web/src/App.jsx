@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useTransition } from 'react';
 import { PortableMonitorStage } from './stage/PortableMonitorStage.jsx';
+import { getSceneLayout } from './stage/scene-layout.config.js';
 
 const DEFAULT_RENDER_SETTINGS = {
   autoRotate: true,
@@ -234,6 +235,20 @@ export default function App() {
 
     setStatusMessage(getSceneStatus(currentScene));
   }, [currentScene]);
+
+  useEffect(() => {
+    if (!currentScene) return;
+    const layout = getSceneLayout(currentScene.id);
+    const nextFov = layout.camera?.fov ?? DEFAULT_RENDER_SETTINGS.fov;
+
+    setRenderSettings((currentSettings) => {
+      if (currentSettings.fov === nextFov) return currentSettings;
+      return {
+        ...currentSettings,
+        fov: nextFov,
+      };
+    });
+  }, [currentScene?.id]);
 
   useEffect(() => {
     if (!data || !currentScene || !packId) return;
@@ -590,7 +605,11 @@ export default function App() {
   }
 
   function resetRenderSettings() {
-    setRenderSettings(DEFAULT_RENDER_SETTINGS);
+    const nextFov = currentScene ? getSceneLayout(currentScene.id).camera?.fov ?? DEFAULT_RENDER_SETTINGS.fov : DEFAULT_RENDER_SETTINGS.fov;
+    setRenderSettings({
+      ...DEFAULT_RENDER_SETTINGS,
+      fov: nextFov,
+    });
     setTransientStatus('Renderer controls reset');
   }
 
