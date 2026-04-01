@@ -87,13 +87,17 @@ const server = http.createServer((req, res) => {
   });
 });
 
-if (require.main === module) {
-  const port = Number(process.env.PORT || 4173);
-  server.listen(port, () => {
+function startServer(port = Number(process.env.PORT || 4173)) {
+  return server.listen(port, () => {
     console.log(`Lumina studio preview is running at http://localhost:${port}`);
   });
 }
 
+if (require.main === module) {
+  startServer();
+}
+
+server.startServer = startServer;
 module.exports = server;
 
 

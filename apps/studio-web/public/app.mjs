@@ -1,4 +1,4 @@
-ï»¿import { PortableMonitorScene } from './three-scene.mjs';
+import { PortableMonitorScene } from './three-scene.mjs';
 
 const refs = {};
 const DEFAULT_RENDER_SETTINGS = {
@@ -53,6 +53,7 @@ async function boot() {
   bindRenderControls();
   state.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   state.renderer = new PortableMonitorScene();
+  publishAutomationApi();
 
   try {
     const manifestResponse = await fetch('./generated/manifest.json', { cache: 'no-store' });
@@ -342,7 +343,7 @@ function updatePreviewUi() {
   refs.toggleAutoplayBtn.textContent = state.preview.playing ? 'Pause Preview' : 'Play Preview';
   refs.toggleAutoplayBtn.disabled = state.preview.exporting;
   refs.exportVideoBtn.disabled = state.preview.exporting;
-  refs.exportVideoBtn.textContent = state.preview.exporting ? 'Exportingâ€¦' : 'Export Video';
+  refs.exportVideoBtn.textContent = state.preview.exporting ? 'Exporting¡­' : 'Export Video';
   renderPreviewTimeline();
 }
 
@@ -612,6 +613,35 @@ function setTransientStatus(message) {
   }, 1600);
 }
 
+
+function publishAutomationApi() {
+  if (typeof window === 'undefined') return;
+  window.__studioPreview = {
+    exportPreviewVideo,
+    getPreferredVideoExtension() {
+      const mimeType = pickSupportedVideoMimeType();
+      return mimeType.includes('mp4') ? 'mp4' : 'webm';
+    },
+    getState() {
+      return {
+        currentSceneId: state.data?.scenes?.[state.sceneIndex]?.id || '',
+        duration: state.preview.duration,
+        packId: state.packId,
+        ready: Boolean(state.data && state.renderer),
+      };
+    },
+    isReady() {
+      return Boolean(state.data && state.renderer);
+    },
+    jumpToScene(index) {
+      selectScene(index, { syncPreview: true });
+    },
+    loadPack,
+    stopPreviewPlayback,
+    togglePreviewPlayback,
+  };
+  window.dispatchEvent(new Event('studio-api-ready'));
+}
 function formatTimestamp(value) {
   const totalSeconds = Math.max(0, Math.round(value));
   const minutes = Math.floor(totalSeconds / 60);
@@ -627,6 +657,7 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+
 
 
 

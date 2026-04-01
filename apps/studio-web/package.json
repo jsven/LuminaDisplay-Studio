@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "lumina-studio-web",
   "private": true,
   "version": "0.1.0",
@@ -7,10 +7,13 @@
     "prepare:vendor": "node scripts/prepare-vendor.js",
     "postinstall": "npm run prepare:vendor",
     "sync:scenes": "node scripts/generate-scene-data.js && node scripts/generate-scene-data-07.js && node scripts/build-manifest.js && npm run prepare:vendor",
-    "dev": "npm run sync:scenes && node server.js",
-    "start": "npm run sync:scenes && node server.js"
+    "convert:webm": "node scripts/webm-to-mp4.js",
+    "dev": "node scripts/run-preview.js",
+    "export:preview": "npm run sync:scenes && node scripts/export-preview-video.js",
+    "start": "node scripts/run-preview.js"
   },
   "dependencies": {
+    "ffmpeg": "^0.0.4",
     "three": "^0.180.0"
   }
 }
