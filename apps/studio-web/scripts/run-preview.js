@@ -2,15 +2,13 @@ const path = require('node:path');
 const { spawn } = require('node:child_process');
 
 const appRoot = path.resolve(__dirname, '..');
-const server = require(path.join(appRoot, 'server.js'));
 const syncScripts = [
   'generate-scene-data.js',
   'generate-scene-data-07.js',
   'build-manifest.js',
-  'prepare-vendor.js',
 ];
 
-let serverInstance = null;
+let viteServer = null;
 let shuttingDown = false;
 
 function runNodeScript(scriptName) {
@@ -53,11 +51,6 @@ function shutdown(reason, exitCode = 0) {
     console.log(`Stopping preview server (${reason})...`);
   }
 
-  if (!serverInstance) {
-    process.exit(exitCode);
-    return;
-  }
-
   const forceExitTimer = setTimeout(() => {
     process.exit(exitCode);
   }, 5000);
@@ -66,14 +59,20 @@ function shutdown(reason, exitCode = 0) {
     forceExitTimer.unref();
   }
 
-  serverInstance.close(() => {
+  if (!viteServer) {
     clearTimeout(forceExitTimer);
     process.exit(exitCode);
-  });
-
-  if (typeof serverInstance.closeAllConnections === 'function') {
-    serverInstance.closeAllConnections();
+    return;
   }
+
+  Promise.resolve(viteServer.close())
+    .catch((error) => {
+      console.error(error);
+    })
+    .finally(() => {
+      clearTimeout(forceExitTimer);
+      process.exit(exitCode);
+    });
 }
 
 function attachLifecycleHandlers() {
@@ -104,7 +103,14 @@ function attachLifecycleHandlers() {
 async function main() {
   attachLifecycleHandlers();
   await syncScenes();
-  serverInstance = server.startServer(Number(process.env.PORT || 4173));
+  const { createServer } = await import('vite');
+  viteServer = await createServer({
+    configFile: path.join(appRoot, 'vite.config.mjs'),
+    root: appRoot,
+  });
+  await viteServer.listen();
+  const url = viteServer.resolvedUrls?.local?.[0] || `http://127.0.0.1:${Number(process.env.PORT || 4173)}/`;
+  console.log(`Lumina studio preview is running at ${url}`);
 }
 
 main().catch((error) => {

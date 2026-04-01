@@ -1,0 +1,14 @@
+{
+  "name": "lumina-display-studio",
+  "private": true,
+  "workspaces": [
+    "apps/studio-web"
+  ],
+  "scripts": {
+    "build": "npm --workspace apps/studio-web run build",
+    "dev": "npm --workspace apps/studio-web run dev",
+    "export:preview": "npm --workspace apps/studio-web run export:preview",
+    "start": "npm --workspace apps/studio-web run start",
+    "sync:scenes": "npm --workspace apps/studio-web run sync:scenes"
+  }
+}

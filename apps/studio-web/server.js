@@ -1,27 +1,27 @@
-﻿const http = require('node:http');
+const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const publicDir = path.join(__dirname, 'public');
+const staticDir = path.join(__dirname, 'dist');
 const mimeTypes = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
-  '.js': 'application/javascript; charset=utf-8',
-  '.mjs': 'application/javascript; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.svg': 'image/svg+xml; charset=utf-8',
   '.ico': 'image/x-icon',
+  '.jpeg': 'image/jpeg',
+  '.jpg': 'image/jpeg',
+  '.js': 'application/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.mjs': 'application/javascript; charset=utf-8',
+  '.png': 'image/png',
+  '.svg': 'image/svg+xml; charset=utf-8',
 };
 
 function resolvePath(urlPath) {
   const cleanPath = decodeURIComponent((urlPath || '/').split('?')[0]);
   const target = cleanPath === '/' ? '/index.html' : cleanPath;
-  const filePath = path.normalize(path.join(publicDir, target));
+  const filePath = path.normalize(path.join(staticDir, target));
 
-  if (!filePath.startsWith(publicDir)) {
+  if (!filePath.startsWith(staticDir)) {
     return null;
   }
 
@@ -46,6 +46,12 @@ function sendFile(res, filePath) {
 }
 
 const server = http.createServer((req, res) => {
+  if (!fs.existsSync(staticDir)) {
+    res.writeHead(503, { 'Content-Type': 'text/plain; charset=utf-8' });
+    res.end('Build output not found. Run npm run build first.');
+    return;
+  }
+
   const filePath = resolvePath(req.url);
 
   if (!filePath) {
@@ -74,7 +80,7 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    const fallbackPath = path.join(publicDir, 'index.html');
+    const fallbackPath = path.join(staticDir, 'index.html');
     const looksLikeAppRoute = !path.extname(filePath);
 
     if (looksLikeAppRoute) {
@@ -94,10 +100,12 @@ function startServer(port = Number(process.env.PORT || 4173)) {
 }
 
 if (require.main === module) {
+  if (!fs.existsSync(staticDir)) {
+    console.error('Build output not found. Run npm run build first.');
+    process.exit(1);
+  }
   startServer();
 }
 
 server.startServer = startServer;
 module.exports = server;
-
-
